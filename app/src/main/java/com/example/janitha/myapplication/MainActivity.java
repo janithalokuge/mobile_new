@@ -103,25 +103,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
                         int[] array = weatherResult.getWeather().getConditions();
 
-                        String s = "";
+                        String s = "Weather: ";
 
                         for(int i=0;i<array.length;i++) {
+                            Log.i("wc", "hi"+array[i]);
+
 
                             switch (array[i]) {
                                 case 1 :
-                                    s.concat("CONDITION_CLEAR");
+                                    s = s.concat("CONDITION_CLEAR");
                                     break;
                                 case 2 :
-                                    s.concat("CONDITION_CLOUDY");
+                                    String str = "CONDITION_CLOUDY";
+                                    s = s.concat(str);
+                                    Log.i("wc", "awado");
+//                                    s = "CONDITION_CLOUDY";
+
+
                                     break;
                                 case 6 :
-                                    s.concat("CONDITION_RAINY");
+                                    s = s.concat("CONDITION_RAINY");
                                     break;
                                 case 0 :
-                                    s.concat("CONDITION_UNKNOWN");
+                                    s = s.concat("CONDITION_UNKNOWN");
+                                    break;
+                                case 9 :
+                                    s = s.concat("CONDITION_WINDY");
                                     break;
                                 default:
-                                    s.concat(Integer.toString(array[i]));
+                                    s = s.concat(Integer.toString(array[i]));
 
 
                             }
