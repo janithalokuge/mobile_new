@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient client;
     public TextView myTextView;
     public TextView weather;
+    public TextView weatherCondition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         weather = (TextView) findViewById(R.id.weather);
         weather.setText(myText);
+
+        weatherCondition = (TextView) findViewById(R.id.weatherCondition);
+        weatherCondition.setText("Unknown conditoin sri lanka");
+
 
         Log.d("TAG", "onCreate() Restoring previous state");
 
@@ -96,6 +101,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             Log.i("w", "w " + weatherResult.getWeather().getConditions()[i]);
 
                         weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
+                        int[] array = weatherResult.getWeather().getConditions();
+
+                        String s = "";
+
+                        for(int i=0;i<array.length;i++) {
+
+                            switch (array[i]) {
+                                case 1 :
+                                    s.concat("CONDITION_CLEAR");
+                                    break;
+                                case 2 :
+                                    s.concat("CONDITION_CLOUDY");
+                                    break;
+                                case 6 :
+                                    s.concat("CONDITION_RAINY");
+                                    break;
+                                case 0 :
+                                    s.concat("CONDITION_UNKNOWN");
+                                    break;
+                                default:
+                                    s.concat(Integer.toString(array[i]));
+
+
+                            }
+                        }
+
+                        weatherCondition.setText(s);
 
                     }
                 });
