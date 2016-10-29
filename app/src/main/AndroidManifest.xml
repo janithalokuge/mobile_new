@@ -12,8 +12,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyCxmWe6Mbw8fTJT2LhhHpsTGAIp3VAS2sY"/>
-
+            android:value="AIzaSyCxmWe6Mbw8fTJT2LhhHpsTGAIp3VAS2sY" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCxmWe6Mbw8fTJT2LhhHpsTGAIp3VAS2sY" />
@@ -25,5 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".DisplayMessageActivity"></activity>
     </application>
+
 </manifest>
