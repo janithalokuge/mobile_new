@@ -2,6 +2,7 @@ package com.example.janitha.myapplication;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.snapshot.HeadphoneStateResult;
+import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.HeadphoneState;
 import com.google.android.gms.awareness.state.Weather;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public TextView myTextView;
     public TextView weather;
     public TextView weatherCondition;
+    public TextView lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         weatherCondition = (TextView) findViewById(R.id.weatherCondition);
         weatherCondition.setText("Unknown conditoin sri lanka");
+
+        lon = (TextView) findViewById(R.id.lon);
+        lon.setText("location");
 
 
         Log.d("TAG", "onCreate() Restoring previous state");
@@ -85,6 +91,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         int x = headphoneState.getState();
                         String y = Integer.toString(x);
                         myTextView.setText(y);
+                    }
+                });
+
+        Awareness.SnapshotApi.getLocation(client)
+                .setResultCallback(new ResultCallback<LocationResult>() {
+                    @Override
+                    public void onResult(@NonNull LocationResult locationResult) {
+                        if (!locationResult.getStatus().isSuccess()) {
+                            Log.e("lo", "Could not get location.");
+                            return;
+                        }
+                        Location location = locationResult.getLocation();
+                        Log.i("lol", "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude());
+
+                        String s = "Lat ";
+                        String s1 = Double.toString(location.getLatitude());
+                        s = s.concat(s1);
+                        s = s.concat(" Lon ");
+                        String s2 = Double.toString(location.getLongitude());
+                        s = s.concat(s2);
+
+                        lon.setText(s);
+
                     }
                 });
 
