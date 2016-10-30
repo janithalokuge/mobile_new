@@ -9,13 +9,15 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="android.support.multidex.MultiDexApplication">
+
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyCxmWe6Mbw8fTJT2LhhHpsTGAIp3VAS2sY" />
+            android:value="AIzaSyBND_9j7G8fClMqdLVXawFGw579uN7PLcI" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCxmWe6Mbw8fTJT2LhhHpsTGAIp3VAS2sY" />
+            android:value="AIzaSyBND_9j7G8fClMqdLVXawFGw579uN7PLcI" />
 
         <activity android:name=".MainActivity">
             <intent-filter>

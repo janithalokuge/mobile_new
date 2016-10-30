@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
     private GoogleApiClient client;
+
     public TextView myTextView;
     public TextView weather;
     public TextView weatherCondition;
@@ -283,8 +284,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     s = s.concat(str);
                                     Log.i("wc", "awado");
 //                                    s = "CONDITION_CLOUDY";
-
-
                                     break;
                                 case 6 :
                                     s = s.concat("CONDITION_RAINY");
