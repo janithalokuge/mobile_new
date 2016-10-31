@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -57,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public TextView weather;
     public TextView weatherCondition;
     public TextView lon;
-    public Button button_home_location;
 //    public TextView pluge;
 
 
@@ -99,21 +97,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         lon = (TextView) findViewById(R.id.lon);
         lon.setText("location");
 
-        button_home_location = (Button)findViewById(R.id.button_home_location);
-        button_home_location.setOnClickListener(new View.OnClickListener(){
-            public void onClick (View v){
-                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
-                startActivity(intent);
-            }
-        });
-
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
 
 
-
-
-        Log.d("TAG", "onCreate() Restoring previous state");
+//        Log.d("TAG", "onCreate() Restoring previous state");
 
         android.content.Context context;
         client = new GoogleApiClient.Builder(this)
@@ -136,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         Intent intent = new Intent(FENCE_RECEIVER_ACTION);
         mFencePendingIntent = PendingIntent.getBroadcast(MainActivity.this,
-                                                            10001,
-                                                            intent,
-                                                            0);
+                10001,
+                intent,
+                0);
 
 //        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
 //        myPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
