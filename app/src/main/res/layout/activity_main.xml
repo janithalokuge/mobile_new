@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="2"
     android:background="@drawable/w"
-android:orientation="vertical" >
+    android:baselineAligned="false">
 
-
-    <EditText android:id="@+id/edit_message"
-        android:layout_weight="1"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/edit_message" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_send"
-        android:onClick="sendMessage" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
 
+        <EditText android:id="@+id/edit_message"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/edit_message" />
 
-
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_send"
+            android:onClick="sendMessage"
+            android:id="@+id/button_send" />
 
     <TextView
-    android:id="@+id/myTextView"
+        android:id="@+id/myTextView"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-
-
-
-        />
+        android:textColor="#ff0000"/>
 
 
 
@@ -40,61 +42,67 @@ android:orientation="vertical" >
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-
-        />
-
-    <!--\n-->
+        android:textColor="#ff0000"/>
 
     <TextView
         android:id="@+id/weatherCondition"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-
-        />
+        android:textColor="#ff0000"/>
 
     <TextView
         android:id="@+id/lon"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-
-        />
+        android:textColor="#ff0000"/>
 
     <TextView
         android:id="@+id/pluge"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-
-        />
+        android:textColor="#ff0000" />
+    
     <TextView
         android:id="@+id/home"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
+        android:textColor="#ff0000"/>
 
-        />
     <TextView
         android:id="@+id/enter"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
+        android:textColor="#ff0000"/>
 
-        />
     <TextView
         android:id="@+id/exit"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-        />
+        android:textColor="#ff0000"/>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginTop="0dp">
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_home_location"
+            android:id="@+id/button_home_location"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
 
 </LinearLayout>
