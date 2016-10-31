@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -14,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import com.google.android.gms.awareness.fence.AwarenessFence;
 import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
+import com.google.android.gms.awareness.fence.LocationFence;
 import com.google.android.gms.awareness.snapshot.HeadphoneStateResult;
 import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
@@ -32,12 +36,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
+import com.plattysoft.leonids.ParticleSystem;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks {
 
@@ -50,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public TextView weather;
     public TextView weatherCondition;
     public TextView lon;
+    public Button button_home_location;
 //    public TextView pluge;
 
 
@@ -59,7 +67,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //    private MyFenceReceiver myFenceReceiver;
 
     private static final String FENCE_RECEIVER_ACTION = "FENCE_RECEIVE";
-    private HeadphoneFenceBroadcastReceiver fenceReceiver;
+    private HeadphoneFenceBroadcastReceiver hfenceReceiver;
+    private LocationFenceBroadcastReceiver fenceReceiver;
+    private ExitFenceBroadcastReceiver efenceReceiver;
+    private EnterFenceBroadcastReceiver enfenceReceiver;
     private PendingIntent mFencePendingIntent;
 
 
@@ -88,6 +99,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         lon = (TextView) findViewById(R.id.lon);
         lon.setText("location");
 
+        button_home_location = (Button)findViewById(R.id.button_home_location);
+        button_home_location.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                startActivity(intent);
+            }
+        });
+
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
 
@@ -103,22 +122,60 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .build();
         client.connect();
 
-        fenceReceiver = new HeadphoneFenceBroadcastReceiver();
+        hfenceReceiver = new HeadphoneFenceBroadcastReceiver();
+//
+//        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
+//        mFencePendingIntent = PendingIntent.getBroadcast(MainActivity.this,
+//                10001,
+//                intent,
+//                0);
+
+        fenceReceiver = new LocationFenceBroadcastReceiver();
+        enfenceReceiver = new EnterFenceBroadcastReceiver();
+        efenceReceiver = new ExitFenceBroadcastReceiver();
 
         Intent intent = new Intent(FENCE_RECEIVER_ACTION);
         mFencePendingIntent = PendingIntent.getBroadcast(MainActivity.this,
-                10001,
-                intent,
-                0);
+                                                            10001,
+                                                            intent,
+                                                            0);
 
 //        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
 //        myPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 //        MyFenceReceiver = new myFenceReceiver();
 //        registerReceiver(myFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 
+//        final PackageManager pm = getPackageManager();
+////get a list of installed apps.
+//        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+//
+//        for (ApplicationInfo packageInfo : packages) {
+//            Log.d("pk", "Installed package :" + packageInfo.packageName);
+//            Log.d("pk", "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+//        }
+//
+//        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.android.camera");
+//        if (launchIntent != null) {
+//            startActivity(launchIntent);//null pointer check in case package name was not found
+//        }
+
+//        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.music");
+//        if (launchIntent != null) {
+//            startActivity(launchIntent);//null pointer check in case package name was not found
+//        }
+
+//        new ParticleSystem(RainActivity.this, 80, R.drawable.rain_drop, 10000)
+//                .setSpeedByComponentsRange(0f, 0f, 0.05f, 0.1f)
+//                .setAcceleration(0.00005f, 90)
+//                .emitWithGravity(findViewById(R.id.cloud), Gravity.BOTTOM, 8);
+
+//        new ParticleSystem(this, numParticles, drawableResId, timeToLive)
+//                .setSpeedRange(0.2f, 0.5f)
+//                .oneShot(anchorView, numParticles);
+
     }
 
-    public static MainActivity  getInstace(){
+    public static MainActivity getInstace() {
         return ins;
     }
 
@@ -127,19 +184,59 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void run() {
                 TextView textV1 = (TextView) findViewById(R.id.pluge);
                 textV1.setText(t);
+                if(t.equals("pluged")){
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.music");
+                    if (launchIntent != null) {
+                        startActivity(launchIntent);//null pointer check in case package name was not found
+                    }
+                }
+            }
+        });
+    }
+
+    public void updateTheTextViewhome(final String t) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                TextView textV1 = (TextView) findViewById(R.id.home);
+                textV1.setText(t);
+            }
+        });
+    } public void updateTheTextViewenter(final String t) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                TextView textV1 = (TextView) findViewById(R.id.enter);
+                textV1.setText(t);
+            }
+        });
+    } public void updateTheTextViewexit(final String t) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                TextView textV1 = (TextView) findViewById(R.id.exit);
+                textV1.setText(t);
             }
         });
     }
 
 
-    public void setHeadState () {
-
-    }
-
     private void registerFences() {
+        // Create a fence.
+//        AwarenessFence locationFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
         // Create a fence.
         AwarenessFence headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
 
+// Register the fence to receive callbacks.
+// The fence key uniquely identifies the fence.
         Awareness.FenceApi.updateFences(
                 client,
                 new FenceUpdateRequest.Builder()
@@ -149,7 +246,66 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i("e", "Fence was successfully registered.");
+                            Log.i("f", "Fence was successfully registered.");
+                        } else {
+                            Log.e("nf", "Fence could not be registered: " + status);
+                        }
+                    }
+                });
+
+
+
+        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 1000, 1000);
+//        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
+
+        Awareness.FenceApi.updateFences(
+                client,
+                new FenceUpdateRequest.Builder()
+                        .addFence("locationFenceKey", homeFence, mFencePendingIntent)
+                        .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i("e", "Fence was successfully registered. home fence");
+                        } else {
+                            Log.e("e2", "Fence could not be registered: " + status);
+                        }
+                    }
+                });
+
+        AwarenessFence enterFence = LocationFence.entering(6.91199, 79.92853, 1000);
+//        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
+
+        Awareness.FenceApi.updateFences(
+                client,
+                new FenceUpdateRequest.Builder()
+                        .addFence("locationFenceKey", enterFence, mFencePendingIntent)
+                        .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i("e", "Fence was successfully registered. entering fence");
+                        } else {
+                            Log.e("e2", "Fence could not be registered: " + status);
+                        }
+                    }
+                });
+
+        AwarenessFence exitFence = LocationFence.exiting(6.91199, 79.92853, 1000);
+//        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
+
+        Awareness.FenceApi.updateFences(
+                client,
+                new FenceUpdateRequest.Builder()
+                        .addFence("locationFenceKey", exitFence, mFencePendingIntent)
+                        .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i("e", "Fence was successfully registered. exitinng fence");
                         } else {
                             Log.e("e2", "Fence could not be registered: " + status);
                         }
@@ -158,43 +314,98 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    private void unregisterFence() {
-        Awareness.FenceApi.updateFences(
-                client,
-                new FenceUpdateRequest.Builder()
-                        .removeFence("headphoneFenceKey")
-                        .build()).setResultCallback(new ResultCallbacks<Status>() {
-            @Override
-            public void onSuccess(@NonNull Status status) {
-                Log.i("un", "Fence " + "headphoneFenceKey" + " successfully removed.");
-            }
-
-            @Override
-            public void onFailure(@NonNull Status status) {
-                Log.i("un", "Fence " + "headphoneFenceKey" + " could NOT be removed.");
-            }
-        });
-    }
+//    private void unregisterFence() {
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .removeFence("headphoneFenceKey")
+//                        .build()).setResultCallback(new ResultCallbacks<Status>() {
+//            @Override
+//            public void onSuccess(@NonNull Status status) {
+//                Log.i("un", "Fence " + "headphoneFenceKey" + " successfully removed.");
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Status status) {
+//                Log.i("un", "Fence " + "headphoneFenceKey" + " could NOT be removed.");
+//            }
+//        });
+//    }
 
     protected void onStart() {
         super.onStart();
         registerFences();
         registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        registerReceiver(enfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterFence();
-        unregisterReceiver(fenceReceiver);
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        unregisterFence();
+//        unregisterReceiver(fenceReceiver);
+//    }
+//  private void registerFences() {
+//        // Create a fence.
+//        AwarenessFence headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
+//
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .addFence("headphoneFenceKey", headphoneFence, mFencePendingIntent)
+//                        .build())
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i("e", "Fence was successfully registered.");
+//                        } else {
+//                            Log.e("e2", "Fence could not be registered: " + status);
+//                        }
+//                    }
+//                });
+//
+//    }
+//
+//    private void unregisterFence() {
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .removeFence("headphoneFenceKey")
+//                        .build()).setResultCallback(new ResultCallbacks<Status>() {
+//            @Override
+//            public void onSuccess(@NonNull Status status) {
+//                Log.i("un", "Fence " + "headphoneFenceKey" + " successfully removed.");
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Status status) {
+//                Log.i("un", "Fence " + "headphoneFenceKey" + " could NOT be removed.");
+//            }
+//        });
+//    }
+//
+//    protected void onStart() {
+//        super.onStart();
+//        registerFences();
+//        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        unregisterFence();
+//        unregisterReceiver(fenceReceiver);
+//    }
 
 
 
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.i("suemar", "OnConnected");
+//        Log.i("suemar", "OnConnected");
 
 //        Awareness.FenceApi.updateFences(
 //                client,
@@ -216,15 +427,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setResultCallback(new ResultCallback<HeadphoneStateResult>() {
                     @Override
                     public void onResult(@NonNull HeadphoneStateResult headphoneStateResult) {
-                        Log.d("tst", "awa");
+//                        Log.d("tst", "awa");
                         if (!headphoneStateResult.getStatus().isSuccess()) {
-                            Log.i("suemar", "error");
-                            Log.d("tst2", "gatte na");
+//                            Log.i("suemar", "error");
+//                            Log.d("tst2", "gatte na");
                             return;
                         }
-                        Log.d("tst3", "gatta");
+//                        Log.d("tst3", "gatta");
                         HeadphoneState headphoneState = headphoneStateResult.getHeadphoneState();
-                        Log.i("suemarstat", "headphone status" + headphoneState.getState());
+//                        Log.i("suemarstat", "headphone status" + headphoneState.getState());
                         int x = headphoneState.getState();
                         String y = Integer.toString(x);
                         myTextView.setText(y);
@@ -236,11 +447,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     @Override
                     public void onResult(@NonNull LocationResult locationResult) {
                         if (!locationResult.getStatus().isSuccess()) {
-                            Log.e("lo", "Could not get location.");
+//                            Log.e("lo", "Could not get location.");
                             return;
                         }
                         Location location = locationResult.getLocation();
-                        Log.i("lol", "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude());
+//                        Log.i("lol", "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude());
 
                         String s = "Lat ";
                         String s1 = Double.toString(location.getLatitude());
@@ -258,13 +469,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setResultCallback(new ResultCallback<WeatherResult>() {
                     @Override
                     public void onResult(@NonNull WeatherResult weatherResult) {
-                        Log.d("w", "awa");
+//                        Log.d("w", "awa");
                         if (!weatherResult.getStatus().isSuccess()) {
-                            Log.i("w", "error weather");
+//                            Log.i("w", "error weather");
                             return;
                         }
                         for(int i = 0; i < weatherResult.getWeather().getConditions().length; i++)
-                            Log.i("w", "w " + weatherResult.getWeather().getConditions()[i]);
+//                            Log.i("w", "w " + weatherResult.getWeather().getConditions()[i]);
 
                         weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
                         int[] array = weatherResult.getWeather().getConditions();
@@ -272,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         String s = "Weather: ";
 
                         for(int i=0;i<array.length;i++) {
-                            Log.i("wc", "hi"+array[i]);
+//                            Log.i("wc", "hi"+array[i]);
 
 
                             switch (array[i]) {
@@ -282,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 case 2 :
                                     String str = "CONDITION_CLOUDY";
                                     s = s.concat(str);
-                                    Log.i("wc", "awado");
+//                                    Log.i("wc", "awado");
 //                                    s = "CONDITION_CLOUDY";
                                     break;
                                 case 6 :
@@ -355,7 +566,7 @@ class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("re", "Fence Receiver Received");
+//        Log.d("re", "Fence Receiver Received");
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
 
@@ -367,20 +578,20 @@ class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
                 String str = "State";
                 switch (fenceState.getCurrentState()) {
                     case FenceState.TRUE:
-                        Log.i("re", "Fence > Headphones are plugged in.");
+//                        Log.i("re", "Fence > Headphones are plugged in.");
 //                        pluge.setText("Head");
                         str = "pluged";
 
                         break;
                     case FenceState.FALSE:
-                        Log.i("re", "Fence > Headphones are NOT plugged in.");
+//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
 //                        pluge.setText("Head");
                         str = "unpluged";
 
 
                         break;
                     case FenceState.UNKNOWN:
-                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
+//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
 //                        pluge.setText("Head");
                         str = "dont know";
                         break;
@@ -396,6 +607,149 @@ class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
     }
 
 }
+
+class LocationFenceBroadcastReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        FenceState fenceState = FenceState.extract(intent);
+
+        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
+//            try {
+            String str = "changed";
+            Log.d("home", "Fence Receiver Received"+fenceState.getCurrentState());
+
+
+
+            switch (fenceState.getCurrentState()) {
+                case 1:
+//                        Log.i("re", "Fence > Headphones are plugged in.");
+////                        pluge.setText("Head");
+                    str = "outside";
+//
+                    break;
+                case 2:
+//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
+////                        pluge.setText("Head");
+                    str = "inside";
+//
+//
+                    break;
+                default:
+//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
+////                        pluge.setText("Head");
+                    str = "dont know";
+//                        break;
+            }
+//
+            MainActivity.getInstace().updateTheTextViewhome(str);
+//
+//            } catch (Exception e) {
+//
+//            }
+//
+        }
+    }
+
+}
+
+class EnterFenceBroadcastReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        FenceState fenceState = FenceState.extract(intent);
+
+        Log.d("enter", "Fence Receiver Received"+fenceState.getCurrentState()+fenceState.getFenceKey());
+
+
+        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
+//            try {
+                String str = "changed";
+
+
+
+                switch (fenceState.getCurrentState()) {
+                    case 1:
+//                        Log.i("re", "Fence > Headphones are plugged in.");
+////                        pluge.setText("Head");
+                        str = "enter";
+//
+                        break;
+                    case 2:
+//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
+////                        pluge.setText("Head");
+                        str = "no-enter";
+//
+//
+                        break;
+                    default:
+//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
+////                        pluge.setText("Head");
+                        str = "dont know";
+//                        break;
+                }
+//
+                MainActivity.getInstace().updateTheTextViewenter(str);
+//
+//            } catch (Exception e) {
+//
+//            }
+//
+        }
+    }
+
+}
+
+
+
+
+class ExitFenceBroadcastReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        FenceState fenceState = FenceState.extract(intent);
+
+        Log.d("exit", "Fence Receiver Received"+fenceState.getCurrentState());
+
+
+        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
+//            try {
+            String str = "changed";
+
+
+
+            switch (fenceState.getCurrentState()) {
+                case 1:
+//                        Log.i("re", "Fence > Headphones are plugged in.");
+////                        pluge.setText("Head");
+                    str = "exit";
+//
+                    break;
+                case 2:
+//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
+////                        pluge.setText("Head");
+                    str = "not exit";
+//
+//
+                    break;
+                default:
+//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
+////                        pluge.setText("Head");
+                    str = "dont know";
+//                        break;
+            }
+//
+            MainActivity.getInstace().updateTheTextViewexit(str);
+//
+//            } catch (Exception e) {
+//
+//            }
+//
+        }
+    }
+
+}
+
 
 //public class MyFenceReceiver extends BroadcastReceiver {
 //    @Override
