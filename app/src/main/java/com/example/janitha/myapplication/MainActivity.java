@@ -133,14 +133,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //        MyFenceReceiver = new myFenceReceiver();
 //        registerReceiver(myFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 
-        final PackageManager pm = getPackageManager();
-//get a list of installed apps.
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-        for (ApplicationInfo packageInfo : packages) {
-            Log.d("pk", "Installed package :" + packageInfo.packageName);
-            Log.d("pk", "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-        }
+//        final PackageManager pm = getPackageManager();
+////get a list of installed apps.
+//        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+//
+//        for (ApplicationInfo packageInfo : packages) {
+//            Log.d("pk", "Installed package :" + packageInfo.packageName);
+//            Log.d("pk", "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+//        }
 //
 //        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.android.camera");
 //        if (launchIntent != null) {
