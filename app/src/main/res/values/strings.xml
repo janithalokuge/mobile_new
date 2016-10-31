@@ -2,6 +2,4 @@
     <string name="app_name">My Application</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
-    <string name="title_activity_home__location">Home_Location</string>
-    <string name="button_home_location">Home Location</string>
 </resources>
