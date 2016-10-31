@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
+import com.plattysoft.leonids.ParticleSystem;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -149,6 +151,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //        if (launchIntent != null) {
 //            startActivity(launchIntent);//null pointer check in case package name was not found
 //        }
+
+//        new ParticleSystem(RainActivity.this, 80, R.drawable.rain_drop, 10000)
+//                .setSpeedByComponentsRange(0f, 0f, 0.05f, 0.1f)
+//                .setAcceleration(0.00005f, 90)
+//                .emitWithGravity(findViewById(R.id.cloud), Gravity.BOTTOM, 8);
+
+//        new ParticleSystem(this, numParticles, drawableResId, timeToLive)
+//                .setSpeedRange(0.2f, 0.5f)
+//                .oneShot(anchorView, numParticles);
 
     }
 
