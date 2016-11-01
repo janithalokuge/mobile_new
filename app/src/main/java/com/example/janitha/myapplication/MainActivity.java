@@ -36,6 +36,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationServices;
 import com.plattysoft.leonids.ParticleSystem;
 
 import android.content.Intent;
@@ -43,6 +44,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -51,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static MainActivity ins;
 
 
-    private GoogleApiClient client;
+    public GoogleApiClient client;
+    public static Location homeLastLocation;
 
     public TextView myTextView;
     public TextView weather;
@@ -116,11 +119,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("TAG", "onCreate() Restoring previous state");
 
         android.content.Context context;
-        client = new GoogleApiClient.Builder(this)
-                .addApi(Awareness.API)
-                .addConnectionCallbacks(this)
-                .build();
-        client.connect();
+
+        if (client == null) {
+            client = new GoogleApiClient.Builder(this)
+                    .addApi(Awareness.API)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .build();
+            client.connect();
+        }
+
+        if(client !=  null){
+            Toast.makeText(this, "Google API Client = OK ",Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(this, "Google API Client = Null ",Toast.LENGTH_LONG).show();
+        }
 
         hfenceReceiver = new HeadphoneFenceBroadcastReceiver();
 //
@@ -447,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     @Override
                     public void onResult(@NonNull LocationResult locationResult) {
                         if (!locationResult.getStatus().isSuccess()) {
-//                            Log.e("lo", "Could not get location.");
+                            Log.e("lo", "Could not get location.");
                             return;
                         }
                         Location location = locationResult.getLocation();
@@ -526,6 +540,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
+        }
+
+
+        homeLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+        if (homeLastLocation == null) {
+            Log.i("GPS", "Ammo GPS = NULL");
+        }
+        else{
+            Log.i("GPS", "Ammo GPS = OK ");
         }
 
     }

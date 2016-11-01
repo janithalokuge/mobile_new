@@ -13,11 +13,15 @@
         android:name="android.support.multidex.MultiDexApplication">
 
         <meta-data
+            android:name="com.google.android.gms.9.2.0"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyBND_9j7G8fClMqdLVXawFGw579uN7PLcI" />
+            android:value="AIzaSyB5E1BU3XiEt78DusI0DYHH4GoZGwrM4KA" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBND_9j7G8fClMqdLVXawFGw579uN7PLcI" />
+            android:value="AIzaSyB5E1BU3XiEt78DusI0DYHH4GoZGwrM4KA" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -26,8 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeLocationActivity"></activity>
-        <activity android:name=".DisplayMessageActivity"></activity>
+        <activity android:name=".HomeLocationActivity">
+
+        </activity>
+        <activity android:name=".DisplayMessageActivity">
+
+        </activity>
     </application>
 
 </manifest>
