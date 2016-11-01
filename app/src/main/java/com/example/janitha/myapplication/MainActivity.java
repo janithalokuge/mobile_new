@@ -48,7 +48,9 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks {
+import static com.google.android.gms.common.api.GoogleApiClient.*;
+
+public class MainActivity extends AppCompatActivity implements ConnectionCallbacks {
 
     private static MainActivity ins;
 
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private ExitFenceBroadcastReceiver efenceReceiver;
     private EnterFenceBroadcastReceiver enfenceReceiver;
     private PendingIntent mFencePendingIntent;
+
+    public static final String LAST_LOCATION = "com.example.janitha.myapplication.LOCATION";
 
 
     @Override
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         button_home_location.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                intent.putExtra(LAST_LOCATION,homeLastLocation);
                 startActivity(intent);
             }
         });
@@ -121,12 +126,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         android.content.Context context;
 
         if (client == null) {
-            client = new GoogleApiClient.Builder(this)
+            client = new Builder(this)
                     .addApi(Awareness.API)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .build();
-            client.connect();
+//            client.connect();
         }
 
         if(client !=  null){
@@ -347,7 +352,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //    }
 
     protected void onStart() {
+        client.connect();
         super.onStart();
+
         registerFences();
         registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
         registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
@@ -355,64 +362,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
+    @Override
+    protected void onStop() {
+        client.disconnect();
+        super.onStop();
 //        unregisterFence();
-//        unregisterReceiver(fenceReceiver);
-//    }
-//  private void registerFences() {
-//        // Create a fence.
-//        AwarenessFence headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
-//
-//        Awareness.FenceApi.updateFences(
-//                client,
-//                new FenceUpdateRequest.Builder()
-//                        .addFence("headphoneFenceKey", headphoneFence, mFencePendingIntent)
-//                        .build())
-//                .setResultCallback(new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(@NonNull Status status) {
-//                        if (status.isSuccess()) {
-//                            Log.i("e", "Fence was successfully registered.");
-//                        } else {
-//                            Log.e("e2", "Fence could not be registered: " + status);
-//                        }
-//                    }
-//                });
-//
-//    }
-//
-//    private void unregisterFence() {
-//        Awareness.FenceApi.updateFences(
-//                client,
-//                new FenceUpdateRequest.Builder()
-//                        .removeFence("headphoneFenceKey")
-//                        .build()).setResultCallback(new ResultCallbacks<Status>() {
-//            @Override
-//            public void onSuccess(@NonNull Status status) {
-//                Log.i("un", "Fence " + "headphoneFenceKey" + " successfully removed.");
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Status status) {
-//                Log.i("un", "Fence " + "headphoneFenceKey" + " could NOT be removed.");
-//            }
-//        });
-//    }
-//
-//    protected void onStart() {
-//        super.onStart();
-//        registerFences();
-//        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        unregisterFence();
-//        unregisterReceiver(fenceReceiver);
-//    }
+        unregisterReceiver(fenceReceiver);
+    }
 
 
 
@@ -542,13 +498,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return;
         }
 
-
+        //Getting the current GPS location of the user
         homeLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
-        if (homeLastLocation == null) {
-            Log.i("GPS", "Ammo GPS = NULL");
+        if (homeLastLocation == null) {  //Then set homeLastLocation to default coordinates
+            homeLastLocation = new Location("Default_Location");
+            homeLastLocation.setLatitude(0.0f);
+            homeLastLocation.setLongitude(0.0f);
+            Log.i("LastLocation", "Set to Default Location = Lat 0.0f, Long 0.0f");
+            Toast.makeText(this, "Set to Default Location = Lat 0.0f, Long 0.0f", Toast.LENGTH_LONG).show();
+
         }
         else{
-            Log.i("GPS", "Ammo GPS = OK ");
+            Log.i("LastLocation", "Lat="+homeLastLocation.getLatitude()+"  Long="+homeLastLocation.getLongitude());
+            Toast.makeText(this, "Lat="+homeLastLocation.getLatitude()+"  Long="+homeLastLocation.getLongitude(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -558,7 +520,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    public final static String EXTRA_MESSAGE = "com.example.janitha.myapplication.MESSAGE";
 
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
@@ -570,20 +532,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 }
 
 class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
-
-//    @Override
-//    public void onReceive(Context context, Intent intent) {
-//
-//
-//
-//    }
-
-//    public TextView pluge;
-
-//    public HeadphoneFenceBroadcastReceiver(TextView pluge) {
-//
-//    }
-
 
     @Override
     public void onReceive(Context context, Intent intent) {

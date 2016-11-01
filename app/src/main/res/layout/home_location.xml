@@ -29,6 +29,7 @@
         map:uiCompass="true"
         map:uiZoomControls="true"
         map:uiZoomGestures="true"
+        map:cameraZoom="17"
 
         tools:layout="@layout/home_location" />
 
