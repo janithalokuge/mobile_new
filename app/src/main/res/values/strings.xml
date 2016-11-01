@@ -4,4 +4,5 @@
     <string name="button_send">Send</string>
     <string name="title_activity_home__location">Home_Location</string>
     <string name="button_home_location">Home Location</string>
+    <string name="textview_home_location_title">Home Location</string>
 </resources>
