@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,19 +33,10 @@ import com.google.android.gms.awareness.state.HeadphoneState;
 import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
-import com.plattysoft.leonids.ParticleSystem;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import java.util.List;
 
 import static com.google.android.gms.common.api.GoogleApiClient.*;
 
@@ -75,10 +65,16 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private HeadphoneFenceBroadcastReceiver hfenceReceiver;
     private LocationFenceBroadcastReceiver fenceReceiver;
     private ExitFenceBroadcastReceiver efenceReceiver;
-    private EnterFenceBroadcastReceiver enfenceReceiver;
+    private EnterFenceBroadcastReceiver enterFenceBroadcastReceiver;
     private PendingIntent mFencePendingIntent;
 
     public static final String LAST_LOCATION = "com.example.janitha.myapplication.LOCATION";
+
+
+    private  double homeLat = 6.91823;
+    private  double homeLon = 79.92891;
+    private  double radius = 1000;
+
 
 
     @Override
@@ -150,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                0);
 
         fenceReceiver = new LocationFenceBroadcastReceiver();
-        enfenceReceiver = new EnterFenceBroadcastReceiver();
+        enterFenceBroadcastReceiver = new EnterFenceBroadcastReceiver();
         efenceReceiver = new ExitFenceBroadcastReceiver();
 
         Intent intent = new Intent(FENCE_RECEIVER_ACTION);
@@ -220,11 +216,17 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 textV1.setText(t);
             }
         });
-    } public void updateTheTextViewenter(final String t) {
+    } public void updateTheTextViewenter(final String t, final Context context) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 TextView textV1 = (TextView) findViewById(R.id.enter);
                 textV1.setText(t);
+                WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+                if(!wifiManager.isWifiEnabled()){
+                    wifiManager.setWifiEnabled(true);
+                    Log.i("wif", "successfully wifi onned");
+                }
             }
         });
     } public void updateTheTextViewexit(final String t) {
@@ -256,50 +258,50 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 // Register the fence to receive callbacks.
 // The fence key uniquely identifies the fence.
-        Awareness.FenceApi.updateFences(
-                client,
-                new FenceUpdateRequest.Builder()
-                        .addFence("headphoneFenceKey", headphoneFence, mFencePendingIntent)
-                        .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i("f", "Fence was successfully registered.");
-                        } else {
-                            Log.e("nf", "Fence could not be registered: " + status);
-                        }
-                    }
-                });
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .addFence("headphoneFenceKey", headphoneFence, mFencePendingIntent)
+//                        .build())
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i("f", "Fence was successfully registered.");
+//                        } else {
+//                            Log.e("nf", "Fence could not be registered: " + status);
+//                        }
+//                    }
+//                });
 
 
 
-        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 1000, 1000);
+        AwarenessFence homeFence = LocationFence.in(6.91823, 79.92891, 1000, 1000);
+//        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
+
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .addFence("locationFenceKey", homeFence, mFencePendingIntent)
+//                        .build())
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i("e", "Fence was successfully registered. home fence");
+//                        } else {
+//                            Log.e("e2", "Fence could not be registered: " + status);
+//                        }
+//                    }
+//                });
+
+        AwarenessFence enterFence = LocationFence.entering(homeLat, homeLon, radius);
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
         Awareness.FenceApi.updateFences(
                 client,
                 new FenceUpdateRequest.Builder()
-                        .addFence("locationFenceKey", homeFence, mFencePendingIntent)
-                        .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i("e", "Fence was successfully registered. home fence");
-                        } else {
-                            Log.e("e2", "Fence could not be registered: " + status);
-                        }
-                    }
-                });
-
-        AwarenessFence enterFence = LocationFence.entering(6.91199, 79.92853, 1000);
-//        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
-
-        Awareness.FenceApi.updateFences(
-                client,
-                new FenceUpdateRequest.Builder()
-                        .addFence("locationFenceKey", enterFence, mFencePendingIntent)
+                        .addFence("enteringFenceKey", enterFence, mFencePendingIntent)
                         .build())
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
@@ -312,24 +314,24 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                     }
                 });
 
-        AwarenessFence exitFence = LocationFence.exiting(6.91199, 79.92853, 1000);
+        AwarenessFence exitFence = LocationFence.exiting(6.91823, 79.92891,1000);
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
-        Awareness.FenceApi.updateFences(
-                client,
-                new FenceUpdateRequest.Builder()
-                        .addFence("locationFenceKey", exitFence, mFencePendingIntent)
-                        .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i("e", "Fence was successfully registered. exitinng fence");
-                        } else {
-                            Log.e("e2", "Fence could not be registered: " + status);
-                        }
-                    }
-                });
+//        Awareness.FenceApi.updateFences(
+//                client,
+//                new FenceUpdateRequest.Builder()
+//                        .addFence("locationFenceKey", exitFence, mFencePendingIntent)
+//                        .build())
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i("e", "Fence was successfully registered. exitinng fence");
+//                        } else {
+//                            Log.e("e2", "Fence could not be registered: " + status);
+//                        }
+//                    }
+//                });
 
     }
 
@@ -356,10 +358,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         super.onStart();
 
         registerFences();
-        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-        registerReceiver(enfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-        registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+//        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+//        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+//        registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
     }
 
     @Override
@@ -367,7 +369,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         client.disconnect();
         super.onStop();
 //        unregisterFence();
-        unregisterReceiver(fenceReceiver);
+//        unregisterReceiver(fenceReceiver);
+        unregisterReceiver(enterFenceBroadcastReceiver);
     }
 
 
@@ -585,6 +588,9 @@ class LocationFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
+        Log.d("home", "Fence Receiver Received before if"+fenceState.getCurrentState()+fenceState.getFenceKey());
+
+
         if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
 //            try {
             String str = "changed";
@@ -630,11 +636,11 @@ class EnterFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("enter", "Fence Receiver Received"+fenceState.getCurrentState()+fenceState.getFenceKey());
+        Log.d("enter", "Fence Receiver Received"+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
 
 
-        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
-//            try {
+        if (TextUtils.equals(fenceState.getFenceKey(), "enteringFenceKey")) {
+            try {
                 String str = "changed";
 
 
@@ -660,19 +666,16 @@ class EnterFenceBroadcastReceiver extends BroadcastReceiver {
 //                        break;
                 }
 //
-                MainActivity.getInstace().updateTheTextViewenter(str);
+                MainActivity.getInstace().updateTheTextViewenter(str, context);
 //
-//            } catch (Exception e) {
+            } catch (Exception e) {
 //
-//            }
+            }
 //
         }
     }
 
 }
-
-
-
 
 class ExitFenceBroadcastReceiver extends BroadcastReceiver {
 
