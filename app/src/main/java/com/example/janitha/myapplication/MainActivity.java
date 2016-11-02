@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
         if(client !=  null){
-            Toast.makeText(this, "Google API Client = OK ",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Google API Client = OK ",Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(this, "Google API Client = Null ",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Google API Client = Null ",Toast.LENGTH_SHORT).show();
         }
 
         hfenceReceiver = new HeadphoneFenceBroadcastReceiver();
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             homeLastLocation.setLatitude(0.0f);
             homeLastLocation.setLongitude(0.0f);
             Log.i("LastLocation", "Set to Default Location = Lat 0.0f, Long 0.0f");
-            Toast.makeText(this, "Set to Default Location = Lat 0.0f, Long 0.0f", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Set to Default Location = Lat 0.0f, Long 0.0f", Toast.LENGTH_SHORT).show();
 
         }
         else{

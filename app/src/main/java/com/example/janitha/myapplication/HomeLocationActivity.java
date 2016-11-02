@@ -6,6 +6,8 @@ package com.example.janitha.myapplication;
 import com.example.janitha.myapplication.MainActivity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -14,10 +16,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.contextmanager.ContextData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -32,6 +37,9 @@ import java.text.DecimalFormat;
 
 public class HomeLocationActivity extends AppCompatActivity implements OnMapReadyCallback{
 
+    Activity currentActivity =this;
+    Context currentContext = this;
+
     private MapFragment mapFragment;
     private GoogleMap map;
     private Location lastLocation;
@@ -41,6 +49,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
     TextView textView_LatitudeValue;
     TextView textView_LongitudeValue;
     EditText editText_FenceRadius;
+    Button button_UpdateLocation;
     String fenceSettingsRadius = "500m";
     private int fenceRadius;
 
@@ -52,10 +61,41 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_home_map);
         mapFragment.getMapAsync(this);
 
+        button_UpdateLocation = (Button)findViewById(R.id.button_UpdateLocation) ;
         textView_LatitudeValue = (TextView)findViewById(R.id.textView_LatitudeValue);
         textView_LongitudeValue = (TextView)findViewById(R.id.textView_LongitudeValue);
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
         fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
+        try {
+            fenceRadius = (int)AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            fenceRadius = 100;
+        }
+        editText_FenceRadius.setText(""+fenceRadius);
+
+
+        button_UpdateLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Location tempLocation = new Location("");
+                tempLocation.setLatitude(currentMarker.getPosition().latitude);
+                tempLocation.setLongitude(currentMarker.getPosition().longitude);
+
+                if (AppData.saveData(currentActivity,AppData.HOME_LOCATOIN, tempLocation)) {
+                    Toast.makeText(currentContext, "Home Location LatLng updated", Toast.LENGTH_SHORT).show();
+                    if(AppData.saveData(currentActivity,AppData.HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
+                        Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
+                        button_UpdateLocation.setEnabled(false);
+                    }
+                }
+                else {
+                    Toast.makeText(currentContext, "Error while saving Home Location!", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
         editText_FenceRadius.addTextChangedListener(new TextWatcher() {
             @Override
@@ -77,7 +117,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                button_UpdateLocation.setEnabled(true);
             }
         });
 
@@ -88,7 +128,13 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         this.map=tempMap;
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 //        Location lastLocation = MainActivity.homeLastLocation;
-        lastLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_LOCATION);
+
+        if(AppData.getData(this,AppData.HOME_LOCATOIN, Location.class) != null) {
+            lastLocation =(Location) AppData.getData(this,AppData.HOME_LOCATOIN, Location.class);
+        } else {
+            lastLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_LOCATION);
+        }
+
         LatLng initialLatLng = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
         map.moveCamera(CameraUpdateFactory.newLatLng(initialLatLng));
 
@@ -116,6 +162,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                button_UpdateLocation.setEnabled(true);
                 drawMarker(latLng);
                 updateLatLng();
                 drawCircle(latLng,fenceRadius);
