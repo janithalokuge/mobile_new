@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 
     public GoogleApiClient client;
-    public static Location homeLastLocation;
+    public static Location currentLocation;
 
     public TextView myTextView;
     public TextView weather;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private EnterFenceBroadcastReceiver enterFenceBroadcastReceiver;
     private PendingIntent mFencePendingIntent;
 
-    public static final String LAST_LOCATION = "com.example.janitha.myapplication.LOCATION";
+    public static final String LAST_HOME_LOCATION = "com.example.janitha.myapplication.LOCATION";
 
 
     private  double homeLat = 6.91823;
@@ -107,14 +107,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         button_home_location.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
-                intent.putExtra(LAST_LOCATION,homeLastLocation);
+                intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
                 startActivity(intent);
             }
         });
 
+
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
-
 
 
 
@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .build();
-//            client.connect();
         }
 
         if(client !=  null){
@@ -137,6 +136,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         else{
             Toast.makeText(this, "Google API Client = Null ",Toast.LENGTH_SHORT).show();
         }
+
+
+
+
+
 
         hfenceReceiver = new HeadphoneFenceBroadcastReceiver();
 //
@@ -217,7 +221,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 textV1.setText(t);
             }
         });
-    } public void updateTheTextViewenter(final String t, final Context context) {
+    }
+
+    public void updateTheTextViewenter(final String t, final Context context) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 TextView textV1 = (TextView) findViewById(R.id.enter);
@@ -230,7 +236,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 }
             }
         });
-    } public void updateTheTextViewexit(final String t) {
+    }
+
+    public void updateTheTextViewexit(final String t) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 TextView textV1 = (TextView) findViewById(R.id.exit);
@@ -296,7 +304,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                    }
 //                });
 
-        AwarenessFence enterFence = LocationFence.entering(homeLat, homeLon, radius);
+//        AwarenessFence enterFence = LocationFence.entering(homeLat, homeLon, radius);
+        AwarenessFence enterFence = LocationFence.entering(AppData.HOME_LOCATION.getLatitude(), AppData.HOME_LOCATION.getLongitude(), AppData.HOME_LOCATION_FENCE_RADIUS);
+        Log.i("EnterFence:","HomeLoc:Lat"+AppData.HOME_LOCATION.getLatitude()+" Long:" + AppData.HOME_LOCATION.getLongitude());
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
         Awareness.FenceApi.updateFences(
@@ -315,24 +325,25 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                     }
                 });
 
-        AwarenessFence exitFence = LocationFence.exiting(6.91823, 79.92891,1000);
+//        AwarenessFence exitFence = LocationFence.exiting(6.91823, 79.92891,1000);
+        AwarenessFence exitFence = LocationFence.exiting(AppData.HOME_LOCATION.getLatitude(), AppData.HOME_LOCATION.getLongitude(), AppData.HOME_LOCATION_FENCE_RADIUS);
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
-//        Awareness.FenceApi.updateFences(
-//                client,
-//                new FenceUpdateRequest.Builder()
-//                        .addFence("locationFenceKey", exitFence, mFencePendingIntent)
-//                        .build())
-//                .setResultCallback(new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(@NonNull Status status) {
-//                        if (status.isSuccess()) {
-//                            Log.i("e", "Fence was successfully registered. exitinng fence");
-//                        } else {
-//                            Log.e("e2", "Fence could not be registered: " + status);
-//                        }
-//                    }
-//                });
+        Awareness.FenceApi.updateFences(
+                client,
+                new FenceUpdateRequest.Builder()
+                        .addFence("locationFenceKey", exitFence, mFencePendingIntent)
+                        .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i("e", "Fence was successfully registered. exitinng fence");
+                        } else {
+                            Log.e("e2", "Fence could not be registered: " + status);
+                        }
+                    }
+                });
 
     }
 
@@ -354,10 +365,48 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //        });
 //    }
 
+    private void updateLocations(){
+        //----------------- Setup Work/Home Location and Fence Radi - Starts --------------------------//
+
+        //SETUP HOME LOCATION
+        if (AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+            AppData.HOME_LOCATION = (Location) AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class);
+        }
+        else{
+            AppData.HOME_LOCATION = new Location("");
+            AppData.HOME_LOCATION.setLatitude(0.0f);
+            AppData.HOME_LOCATION.setLongitude(0.0f);
+        }
+        if(AppData.getData(this, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class)!= null){
+            AppData.HOME_LOCATION_FENCE_RADIUS = (int)AppData.getData(this, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        }
+        else{
+            AppData.HOME_LOCATION_FENCE_RADIUS = 100;
+        }
+
+        //SETUP WORK LOCATION
+        if (AppData.getData(this,AppData.STR_WORK_LOCATOIN, Location.class) != null) {
+            AppData.WORK_LOCATION = (Location) AppData.getData(this,AppData.STR_WORK_LOCATOIN, Location.class);
+        }
+        else{
+            AppData.WORK_LOCATION = new Location("");
+            AppData.WORK_LOCATION.setLatitude(0.0f);
+            AppData.WORK_LOCATION.setLongitude(0.0f);
+        }
+        if(AppData.getData(this, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class)!= null){
+            AppData.WORK_LOCATION_FENCE_RADIUS = (int)AppData.getData(this, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class);
+        }
+        else{
+            AppData.WORK_LOCATION_FENCE_RADIUS = 100;
+        }
+
+        //----------------- Setup Work/Home Location and Fence Radi - Ends --------------------------//
+    }
+
     protected void onStart() {
         client.connect();
         super.onStart();
-
+        updateLocations();
         registerFences();
 //        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 //        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
@@ -503,18 +552,18 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
         //Getting the current GPS location of the user
-        homeLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
-        if (homeLastLocation == null) {  //Then set homeLastLocation to default coordinates
-            homeLastLocation = new Location("Default_Location");
-            homeLastLocation.setLatitude(0.0f);
-            homeLastLocation.setLongitude(0.0f);
+        currentLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+        if (currentLocation == null) {  //Then set currentLocation to default coordinates
+            currentLocation = new Location("Default_Location");
+            currentLocation.setLatitude(0.0f);
+            currentLocation.setLongitude(0.0f);
             Log.i("LastLocation", "Set to Default Location = Lat 0.0f, Long 0.0f");
             Toast.makeText(this, "Set to Default Location = Lat 0.0f, Long 0.0f", Toast.LENGTH_SHORT).show();
 
         }
         else{
-            Log.i("LastLocation", "Lat="+homeLastLocation.getLatitude()+"  Long="+homeLastLocation.getLongitude());
-            Toast.makeText(this, "Lat="+homeLastLocation.getLatitude()+"  Long="+homeLastLocation.getLongitude(), Toast.LENGTH_LONG).show();
+            Log.i("LastLocation", "Lat="+ currentLocation.getLatitude()+"  Long="+ currentLocation.getLongitude());
+            Toast.makeText(this, "Lat="+ currentLocation.getLatitude()+"  Long="+ currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -642,9 +691,7 @@ class EnterFenceBroadcastReceiver extends BroadcastReceiver {
 
         if (TextUtils.equals(fenceState.getFenceKey(), "enteringFenceKey")) {
             try {
-                String str = "changed";
-
-
+                String str;
 
                 switch (fenceState.getCurrentState()) {
                     case 1:
@@ -686,12 +733,9 @@ class ExitFenceBroadcastReceiver extends BroadcastReceiver {
 
         Log.d("exit", "Fence Receiver Received"+fenceState.getCurrentState());
 
-
         if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
 //            try {
             String str = "changed";
-
-
 
             switch (fenceState.getCurrentState()) {
                 case 1:
