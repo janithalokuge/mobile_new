@@ -38,7 +38,7 @@
 
 
     <TextView
-    android:id="@+id/weather"
+        android:id="@+id/weather"
         android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"

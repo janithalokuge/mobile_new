@@ -3,7 +3,6 @@ package com.example.janitha.myapplication;
 /**
  * Created by Siri on 10/30/2016.
  */
-import com.example.janitha.myapplication.MainActivity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,7 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.contextmanager.ContextData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -42,7 +40,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
 
     private MapFragment mapFragment;
     private GoogleMap map;
-    private Location lastLocation;
+    private Location currentLocation;
     private Marker currentMarker;
     private  Circle circle;
 
@@ -66,8 +64,8 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         textView_LongitudeValue = (TextView)findViewById(R.id.textView_LongitudeValue);
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
         //fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-        if(AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
-           fenceRadius = (int)AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        if(AppData.getData(this,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
+           fenceRadius = (int)AppData.getData(this,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
         }
         else{
             fenceRadius = 100;
@@ -83,9 +81,9 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 tempLocation.setLatitude(currentMarker.getPosition().latitude);
                 tempLocation.setLongitude(currentMarker.getPosition().longitude);
 
-                if (AppData.saveData(currentActivity,AppData.HOME_LOCATOIN, tempLocation)) {
+                if (AppData.saveData(currentActivity,AppData.STR_HOME_LOCATOIN, tempLocation)) {
                     Toast.makeText(currentContext, "Home Location LatLng updated", Toast.LENGTH_SHORT).show();
-                    if(AppData.saveData(currentActivity,AppData.HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
+                    if(AppData.saveData(currentActivity,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
                         Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
                         Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
                         button_UpdateLocation.setEnabled(false);
@@ -128,15 +126,15 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
     public void onMapReady(GoogleMap tempMap){
         this.map=tempMap;
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//        Location lastLocation = MainActivity.homeLastLocation;
+//        Location currentLocation = MainActivity.currentLocation;
 
-        if(AppData.getData(this,AppData.HOME_LOCATOIN, Location.class) != null) {
-            lastLocation =(Location) AppData.getData(this,AppData.HOME_LOCATOIN, Location.class);
+        if(AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+            currentLocation =(Location) AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class);
         } else {
-            lastLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_LOCATION);
+            currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
         }
 
-        LatLng initialLatLng = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
+        LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         map.moveCamera(CameraUpdateFactory.newLatLng(initialLatLng));
 
 
@@ -149,7 +147,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                     Toast.LENGTH_LONG).show();
         }
 
-        if (lastLocation != null) {
+        if (currentLocation != null) {
             currentMarker = map.addMarker(new MarkerOptions()
                     .position(initialLatLng)
                     .title("Current Position")
