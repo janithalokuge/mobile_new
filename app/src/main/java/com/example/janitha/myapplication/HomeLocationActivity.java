@@ -65,13 +65,14 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         textView_LatitudeValue = (TextView)findViewById(R.id.textView_LatitudeValue);
         textView_LongitudeValue = (TextView)findViewById(R.id.textView_LongitudeValue);
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
-        fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-        try {
-            fenceRadius = (int)AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        //fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
+        if(AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
+           fenceRadius = (int)AppData.getData(this,AppData.HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        }
+        else{
             fenceRadius = 100;
         }
+
         editText_FenceRadius.setText(""+fenceRadius);
 
 
