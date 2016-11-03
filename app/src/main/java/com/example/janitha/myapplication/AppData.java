@@ -3,6 +3,7 @@ package com.example.janitha.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
@@ -13,10 +14,12 @@ import com.google.gson.Gson;
 
 public class AppData {
 
-    public static String HOME_LOCATOIN = "com.example.janitha.myapplication.HOME_LOCATION"; //returns LatLng object
+    //----------SharedPref Variable Key Strings - Starts   ----------------------------//
+
+    public static String HOME_LOCATOIN = "com.example.janitha.myapplication.HOME_LOCATION"; //returns Location object
     public static String HOME_LOCATOIN_FENCE_RADIUS = "com.example.janitha.myapplication.HOME_LOCATOIN_FENCE_RADIUS";
 
-    public static String WORK_LOCATOIN = "com.example.janitha.myapplication.WORK_LOCATION"; //returns LatLng object
+    public static String WORK_LOCATOIN = "com.example.janitha.myapplication.WORK_LOCATION"; //returns Location object
     public static String WORK_LOCATOIN_FENCE_RADIUS = "com.example.janitha.myapplication.WORK_LOCATOIN_FENCE_RADIUS";
 
     //to store the list of days where the user stays at home/work
@@ -27,6 +30,20 @@ public class AppData {
     //save which apps open when
     //returns ArrayList of customized user_pref_Objects
     public static String USER_PREFERENCE_LIST = "com.example.janitha.myapplication.USER_PREFERENCE_LIST";
+
+    //----------SharedPref Variable Key Strings - Ends   ----------------------------//
+
+
+    //----------  Global Variables - Starts   ----------------------------//
+
+    private static Location HOME_LOCATION;
+    private static int HOME_LOCATION_RADIUS;
+
+    private static Location WORK_LOCATION;
+    private static int WORK_LOCATION_RADIUS;
+
+    //----------  Global Variables - Starts   ----------------------------//
+
 
     public static boolean saveData(Activity activity, String variableName, Object obj){
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
