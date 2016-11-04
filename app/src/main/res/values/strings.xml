@@ -5,4 +5,15 @@
     <string name="title_activity_home__location">Home_Location</string>
     <string name="button_home_location">Home Location</string>
     <string name="textview_home_location_title">Home Location</string>
+
+    <string name="work_location_weather_notification_title_template">Work Location Weather: %1$s
+    </string>
+
+    <!-- TODO: remove this placeholder text -->
+    <string name="work_location_weather_notification_placeholder_text_template">You said %1$s and
+        lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. TaHike!!!
+    </string>
+
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
 </resources>

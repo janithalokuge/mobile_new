@@ -408,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         super.onStart();
         updateLocations();
         registerFences();
+        WorkLocationWeatherNotification.notify(this, "Ammo", 4);
 //        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 //        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
         registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
@@ -562,8 +563,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         }
         else{
-            Log.i("LastLocation", "Lat="+ currentLocation.getLatitude()+"  Long="+ currentLocation.getLongitude());
-            Toast.makeText(this, "Lat="+ currentLocation.getLatitude()+"  Long="+ currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+            Log.i("LastLocation", "Lat="+ currentLocation.getLatitude()
+                    +"  Long="+ currentLocation.getLongitude());
+            Toast.makeText(this, "Lat="+ currentLocation.getLatitude()
+                    +"  Long="+ currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         }
 
     }
