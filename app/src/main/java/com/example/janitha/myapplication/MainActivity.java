@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public TextView weatherCondition;
     public TextView lon;
     public Button button_home_location;
-//    public TextView pluge;
+    public TextView isUserHome;
 
 
 //    private PendingIntent myPendingIntent;
@@ -102,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         lon = (TextView) findViewById(R.id.lon);
         lon.setText("location");
+
+        isUserHome = (TextView) findViewById(R.id.isUserHome);
+        isUserHome.setText("Is User Home or not : ");
 
         button_home_location = (Button)findViewById(R.id.button_home_location);
         button_home_location.setOnClickListener(new View.OnClickListener(){
@@ -483,6 +486,38 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                         s = s.concat(" Lon ");
                         String s2 = Double.toString(location.getLongitude());
                         s = s.concat(s2);
+
+                        Double lat = location.getLatitude();
+                        Double longitude = location.getLongitude();
+//                        Location.c
+
+                        double ltd = lat - homeLat;
+                        double lgd = longitude - homeLon;
+
+//                        Math.pow(2.4,3);
+
+//                        double d = Math.sqrt(Math.pow(ltd, 2) + Math.pow(lgd, 2));
+
+                        double earthRadius = 6371000; //meters
+                        double dLat = Math.toRadians(lat-homeLat);
+                        double dLng = Math.toRadians(longitude-homeLon);
+                        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                Math.cos(Math.toRadians(homeLat)) * Math.cos(Math.toRadians(lat)) *
+                                        Math.sin(dLng/2) * Math.sin(dLng/2);
+                        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        float dist = (float) (earthRadius * c);
+
+//                        return dist;
+
+//                        float[] reulsts = Location.distanceBetween(lat, lon, lat, lon);
+//                        Location.distanceBetween(location.getLatitude(), location.getLongitude(), homeLat, homeLon);
+
+
+                        if(dist < radius){
+                            isUserHome.setText("Is User Home or not : Yes");
+                        } else {
+                            isUserHome.setText("Is User Home or not : NO");
+                        }
 
                         lon.setText(s);
 
