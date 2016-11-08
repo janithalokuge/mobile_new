@@ -96,29 +96,39 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
             }
         });
 
-        editText_FenceRadius.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                try {
-                    fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), fenceRadius);
-                }
-                catch (NumberFormatException e) { // When converting a null string to int
-                    e.printStackTrace();
-                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 0);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                button_UpdateLocation.setEnabled(true);
-            }
-        });
+        //move this method to mapReady method
+//        editText_FenceRadius.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                if(AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+//                    currentLocation =(Location) AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class);
+//                } else {
+//                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+//                }
+//                LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//
+//
+//                try {
+//                    fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
+//                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), fenceRadius);
+//                }
+//                catch (NumberFormatException e) { // When converting a null string to int
+//                    e.printStackTrace();
+//                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 0);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                button_UpdateLocation.setEnabled(true);
+//            }
+//        });
 
     }
 
@@ -165,6 +175,39 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 drawMarker(latLng);
                 updateLatLng();
                 drawCircle(latLng,fenceRadius);
+            }
+        });
+
+        editText_FenceRadius.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+                    currentLocation =(Location) AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class);
+                } else {
+                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                }
+                LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+
+                try {
+                    fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
+                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), fenceRadius);
+                }
+                catch (NumberFormatException e) { // When converting a null string to int
+                    e.printStackTrace();
+                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 0);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                button_UpdateLocation.setEnabled(true);
             }
         });
     }

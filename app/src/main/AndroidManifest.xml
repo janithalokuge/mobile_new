@@ -25,6 +25,32 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB5E1BU3XiEt78DusI0DYHH4GoZGwrM4KA" />
 
+        <service
+            android:name="com.example.janitha.myapplication.services.FenceEnterService"
+            android:exported="true"
+            android:icon="@drawable/ic_stat_work_location_weather"
+            android:label="Fence_Enter_Service"/>
+
+
+        <!--<receiver android:name="com.example.janitha.myapplication.services.EnterFenceBroadcastReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.example.janitha.myapplication.FENCE_RECEIVE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+
+        <!--<receiver android:name="com.example.janitha.myapplication.broadcast_receivers.InHomeLocationFenceBroadcastReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.example.janitha.myapplication.FENCE_RECEIVE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+
+        <!--<receiver android:name="com.example.janitha.myapplication.broadcast_receivers.HeadphoneFenceBroadcastReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.example.janitha.myapplication.FENCE_RECEIVE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,8 +58,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".HomeLocationActivity"></activity>
         <activity android:name=".DisplayMessageActivity"></activity>
+
     </application>
 
 </manifest>
