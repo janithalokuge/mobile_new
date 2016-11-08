@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -185,9 +186,10 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        ctx = this;
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences prefs = this.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION", Context.MODE_PRIVATE);
+        ctx = getApplicationContext();
+//        ctx = this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+//        SharedPreferences prefs = ctx.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION", Context.MODE_PRIVATE);
         json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION", null);
         obj = new Gson().fromJson(json, Location.class);
 
@@ -201,7 +203,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         Log.i("FenceService", "onStartCmd  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
 
         //Getting the HomeLoc Radius
-        prefs = this.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", Context.MODE_PRIVATE);
+//        prefs = ctx.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", Context.MODE_PRIVATE);
         json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", null);
         obj = new Gson().fromJson(json, Integer.class);
 
@@ -212,7 +214,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         }
 
         if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this)
+            googleApiClient = new GoogleApiClient.Builder(ctx)
                     .addApi(Awareness.API)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
@@ -227,7 +229,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         }
 
         Intent tempIntent = new Intent(FENCE_RECEIVER_ACTION);
-        pendingIntent = PendingIntent.getBroadcast(this, 10001, tempIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(ctx, 10001, tempIntent, 0);
 
         //------------------ Creating Fences - starts ----------------------- //
 
@@ -288,7 +290,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

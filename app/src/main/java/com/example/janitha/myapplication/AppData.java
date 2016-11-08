@@ -1,5 +1,7 @@
 package com.example.janitha.myapplication;
 
+import android.Manifest;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,7 +39,6 @@ public class AppData {
     //----------  Global Variables - Starts   ----------------------------//
 
 
-
     public static Location HOME_LOCATION;
     public static int HOME_LOCATION_FENCE_RADIUS;
 
@@ -47,7 +48,7 @@ public class AppData {
     //----------  Global Variables - Starts   ----------------------------//
 
 
-    public static boolean saveData(Context context, String variableName, Object obj){
+    public static boolean saveData(Context context,String variableName, Object obj){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         //SharedPreferences sharedPref = activity.getSharedPreferences(variableName,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
