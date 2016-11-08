@@ -38,7 +38,7 @@ import java.text.DecimalFormat;
 public class HomeLocationActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     Activity currentActivity =this;
-    Context currentContext = this;
+    Context currentContext;
 
     private MapFragment mapFragment;
     private GoogleMap map;
@@ -60,14 +60,15 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_home_map);
         mapFragment.getMapAsync(this);
+        currentContext = getApplicationContext();
 
         button_UpdateLocation = (Button)findViewById(R.id.button_UpdateLocation) ;
         textView_LatitudeValue = (TextView)findViewById(R.id.textView_LatitudeValue);
         textView_LongitudeValue = (TextView)findViewById(R.id.textView_LongitudeValue);
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
         //fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-        if(AppData.getData(this,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
-           fenceRadius = (int)AppData.getData(this,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
+           fenceRadius = (int)AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
         }
         else{
             fenceRadius = 100;
@@ -83,9 +84,9 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 tempLocation.setLatitude(currentMarker.getPosition().latitude);
                 tempLocation.setLongitude(currentMarker.getPosition().longitude);
 
-                if (AppData.saveData(currentActivity,AppData.STR_HOME_LOCATOIN, tempLocation)) {
+                if (AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, tempLocation)) {
                     Toast.makeText(currentContext, "Home Location LatLng updated", Toast.LENGTH_SHORT).show();
-                    if(AppData.saveData(currentActivity,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
+                    if(AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
                         Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
                         Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
                         button_UpdateLocation.setEnabled(false);
@@ -95,6 +96,9 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                         fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
                         currentContext.startService(fenceEnterServiceIntent);
 
+                    }
+                    else{
+                        Toast.makeText(currentContext, "Error while updating Home Location Radius!", Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
@@ -146,8 +150,8 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 //        Location currentLocation = MainActivity.currentLocation;
 
-        if(AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-            currentLocation =(Location) AppData.getData(this,AppData.STR_HOME_LOCATOIN, Location.class);
+        if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+            currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
         } else {
             currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
         }
@@ -195,8 +199,8 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-                    currentLocation =(Location) AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class);
+                if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+                    currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
                 } else {
                     currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
                 }

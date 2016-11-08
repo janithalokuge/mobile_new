@@ -33,7 +33,7 @@ public class EnterFenceBroadcastReceiver extends BroadcastReceiver {
                 case FenceState.TRUE:
                     //When TRUE
                     str = "Entered HomeLoc";
-                    WorkLocationWeatherNotification.notify(FenceEnterService.ctx,"You entered home location", 4);
+                    WorkLocationWeatherNotification.notify(context.getApplicationContext(),"You entered home location", 4);
                     Log.i("EnterFence_BR", "Fence Enter == TRUE");
                     break;
                 case FenceState.FALSE:

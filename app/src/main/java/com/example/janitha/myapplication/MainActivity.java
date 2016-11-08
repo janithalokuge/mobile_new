@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         Intent fenceEnterServiceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
         fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
         if (isMyServiceRunning(FenceEnterService.class) == false) {
-            this.startService(fenceEnterServiceIntent);
+            getApplicationContext().startService(fenceEnterServiceIntent);
         }
 
     }
