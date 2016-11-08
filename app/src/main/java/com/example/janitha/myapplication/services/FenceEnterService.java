@@ -64,6 +64,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
     Object obj;
     static int count = 0;
     public static final String FENCE_RECEIVER_ACTION = "com.example.janitha.myapplication.FENCE_RECEIVE";
+    int homeLocationRadius;
     LocationRequest  mLocationRequest;
 
 
@@ -200,14 +201,14 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         Log.i("FenceService", "onStartCmd  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
 
         //Getting the HomeLoc Radius
-        json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATOIN_FENCE_RADIUS", null);
+        prefs = this.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", Context.MODE_PRIVATE);
+        json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", null);
         obj = new Gson().fromJson(json, Integer.class);
-        int homeLocationRadius;
 
         if (obj != null) {
             homeLocationRadius = (int) obj;
         } else {
-            homeLocationRadius = 99;
+            homeLocationRadius = 49;
         }
 
         if (googleApiClient == null) {
