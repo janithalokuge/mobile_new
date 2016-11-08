@@ -7,6 +7,7 @@ package com.example.janitha.myapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -87,6 +89,12 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                         Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
                         Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
                         button_UpdateLocation.setEnabled(false);
+
+                        //Restart FenceEnter Service to update the Location Fence details
+                        Intent fenceEnterServiceIntent = new Intent(currentActivity, FenceEnterService.class);
+                        fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
+                        currentContext.startService(fenceEnterServiceIntent);
+
                     }
                 }
                 else {
