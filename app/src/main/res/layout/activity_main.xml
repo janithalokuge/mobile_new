@@ -74,7 +74,7 @@
 
         <TextView
         android:id="@+id/isUserHome"
-        android:layout_weight="1"
+        android:layout_weight="0.91"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:textColor="#ff0000"/>
