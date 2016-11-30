@@ -18,9 +18,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,10 +56,42 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
     String fenceSettingsRadius = "500m";
     private int fenceRadius;
 
+    Switch switch_HomeWork;
+    TextView switchStatus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_location);
+
+        switch_HomeWork = (Switch) findViewById(R.id.switch_HomeWork);
+        switchStatus = (TextView) findViewById(R.id.switchStatus);
+
+        //set the switch to ON
+        switch_HomeWork.setChecked(true);
+        //attach a listener to check for changes in state
+        switch_HomeWork.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                if(isChecked){
+                    switchStatus.setText("Switch is currently ON");
+                }else{
+                    switchStatus.setText("Switch is currently OFF");
+                }
+
+            }
+        });
+
+        //check the current state before we display the screen
+        if(switch_HomeWork.isChecked()){
+            switchStatus.setText("Switch is currently ON");
+        }
+        else {
+            switchStatus.setText("Switch is currently OFF");
+        }
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_home_map);
         mapFragment.getMapAsync(this);
@@ -68,7 +103,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
         //fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
         if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
-           fenceRadius = (int)AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+            fenceRadius = (int)AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
         }
         else{
             fenceRadius = 100;

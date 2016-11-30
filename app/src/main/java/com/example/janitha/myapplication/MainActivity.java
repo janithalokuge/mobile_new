@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public static Activity mainActivity;
     public static Context mainContext;
 
-
-    public static  GoogleApiClient client;
+    public static GoogleApiClient client;
     public static Location currentLocation;
 
     public TextView myTextView;
@@ -78,19 +77,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     public static final String LAST_HOME_LOCATION = "com.example.janitha.myapplication.LOCATION";
 
-
-    private  double homeLat = 6.91823;
-    private  double homeLon = 79.92891;
-    private  double radius = 1000;
-
-
-
+    private double homeLat = 6.91823;
+    private double homeLon = 79.92891;
+    private double radius = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ins = this;
-
 
         setContentView(R.layout.activity_main);
         mainActivity = this;
@@ -112,9 +106,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         isUserHome = (TextView) findViewById(R.id.isUserHome);
         isUserHome.setText("Is User Home or not : ");
 
-        button_home_location = (Button)findViewById(R.id.button_home_location);
-        button_home_location.setOnClickListener(new View.OnClickListener(){
-            public void onClick (View v){
+        button_home_location = (Button) findViewById(R.id.button_home_location);
+        button_home_location.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
                 intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
                 startActivity(intent);
@@ -124,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
-
 
 
         Log.d("TAG", "onCreate() Restoring previous state");
@@ -140,11 +133,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             client.connect();
         }
 
-        if(client !=  null){
-            Toast.makeText(this, "Google API Client = OK ",Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(this, "Google API Client = Null ",Toast.LENGTH_SHORT).show();
+        if (client != null) {
+            Toast.makeText(this, "Google API Client = OK ", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Google API Client = Null ", Toast.LENGTH_SHORT).show();
         }
 
         updateLocations(this);
@@ -164,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 //        registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 //        registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-
 
 
 //        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
@@ -203,11 +194,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         //Start FenceEnterService Service
         Intent fenceEnterServiceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
-        fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
+        fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus", "User entered Home Location area");
         if (isMyServiceRunning(FenceEnterService.class) == false) {
             getApplicationContext().startService(fenceEnterServiceIntent);
         }
-
     }
 
     public static MainActivity getInstace() {
@@ -219,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             public void run() {
                 TextView textV1 = (TextView) findViewById(R.id.headphoneStatus);
                 textV1.setText(t);
-                if(t.equals("pluged")){
+                if (t.equals("pluged")) {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.music");
                     if (launchIntent != null) {
                         startActivity(launchIntent);//null pointer check in case package name was not found
@@ -245,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 textV1.setText(t);
                 WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-                if(!wifiManager.isWifiEnabled()){
+                if (!wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(true);
                     Log.i("wif", "successfully wifi onned");
                 }
@@ -303,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             AwarenessFence homeFence = LocationFence.in(6.91823, 79.92891, 1000, 1000);
         } catch (SecurityException e) {
             e.printStackTrace();
-            Log.e("Error_siri","Awareness API Permission Error!!!");
+            Log.e("Error_siri", "Awareness API Permission Error!!!");
         }
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
@@ -326,13 +316,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //        AwarenessFence enterFence = LocationFence.entering(homeLat, homeLon, radius);
         AwarenessFence enterFence = null;
         try {
-            Log.i("RegisterFence","Lat:"+homeLocation.getLatitude() +" Long:"+homeLocation.getLongitude());
+            Log.i("RegisterFence", "Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
             enterFence = LocationFence.entering(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius);
         } catch (SecurityException e) {
             e.printStackTrace();
-            Log.e("Error_siri","Awareness API Permission Error!!!");
+            Log.e("Error_siri", "Awareness API Permission Error!!!");
         }
-        Log.i("registerFences","EnterFence: HomeLoc:Lat"+homeLocation.getLatitude()+" Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
+        Log.i("registerFences", "EnterFence: HomeLoc:Lat" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude() + " Radius: " + homeLocationRadius);
 //        AwarenessFence homeFence = LocationFence.in(6.91199, 79.92853, 10, 1000);
 
         Awareness.FenceApi.updateFences(
@@ -397,41 +387,37 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //        });
 //    }
 
-    public static void updateLocations(Activity currentActivity){
+    public static void updateLocations(Activity currentActivity) {
         //----------------- Setup Work/Home Location and Fence Radi - Starts --------------------------//
 
         //SETUP HOME LOCATION
-        if (AppData.getData(currentActivity,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-            AppData.HOME_LOCATION = (Location) AppData.getData(currentActivity,AppData.STR_HOME_LOCATOIN, Location.class);
-        }
-        else{
+        if (AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+            AppData.HOME_LOCATION = (Location) AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN, Location.class);
+        } else {
             AppData.HOME_LOCATION = new Location("EmptyLocation");
             AppData.HOME_LOCATION.setLatitude(0.0f);
             AppData.HOME_LOCATION.setLongitude(0.0f);
         }
-        Log.i("updateLocations(HL)","Lat:"+AppData.HOME_LOCATION.getLatitude() +" Long:"+AppData.HOME_LOCATION.getLongitude());
+        Log.i("updateLocations(HL)", "Lat:" + AppData.HOME_LOCATION.getLatitude() + " Long:" + AppData.HOME_LOCATION.getLongitude());
 
 
-        if(AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class)!= null){
-            AppData.HOME_LOCATION_FENCE_RADIUS = (int)AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
-        }
-        else{
+        if (AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null) {
+            AppData.HOME_LOCATION_FENCE_RADIUS = (int) AppData.getData(currentActivity, AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+        } else {
             AppData.HOME_LOCATION_FENCE_RADIUS = 100;
         }
 
         //SETUP WORK LOCATION
-        if (AppData.getData(currentActivity,AppData.STR_WORK_LOCATOIN, Location.class) != null) {
-            AppData.WORK_LOCATION = (Location) AppData.getData(currentActivity,AppData.STR_WORK_LOCATOIN, Location.class);
-        }
-        else{
+        if (AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN, Location.class) != null) {
+            AppData.WORK_LOCATION = (Location) AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN, Location.class);
+        } else {
             AppData.WORK_LOCATION = new Location("");
             AppData.WORK_LOCATION.setLatitude(0.0f);
             AppData.WORK_LOCATION.setLongitude(0.0f);
         }
-        if(AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class)!= null){
-            AppData.WORK_LOCATION_FENCE_RADIUS = (int)AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class);
-        }
-        else{
+        if (AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class) != null) {
+            AppData.WORK_LOCATION_FENCE_RADIUS = (int) AppData.getData(currentActivity, AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class);
+        } else {
             AppData.WORK_LOCATION_FENCE_RADIUS = 100;
         }
 
@@ -465,10 +451,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
     }
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -539,12 +524,12 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                        double d = Math.sqrt(Math.pow(ltd, 2) + Math.pow(lgd, 2));
 
                         double earthRadius = 6371000; //meters
-                        double dLat = Math.toRadians(lat-homeLat);
-                        double dLng = Math.toRadians(longitude-homeLon);
-                        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        double dLat = Math.toRadians(lat - homeLat);
+                        double dLng = Math.toRadians(longitude - homeLon);
+                        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                                 Math.cos(Math.toRadians(homeLat)) * Math.cos(Math.toRadians(lat)) *
-                                        Math.sin(dLng/2) * Math.sin(dLng/2);
-                        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                         float dist = (float) (earthRadius * c);
 
 //                        return dist;
@@ -553,7 +538,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                        Location.distanceBetween(location.getLatitude(), location.getLongitude(), homeLat, homeLon);
 
 
-                        if(dist < radius){
+                        if (dist < radius) {
                             isUserHome.setText("Is User Home or not : Yes");
                         } else {
                             isUserHome.setText("Is User Home or not : NO");
@@ -573,35 +558,35 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                            Log.i("w", "error weather");
                             return;
                         }
-                        for(int i = 0; i < weatherResult.getWeather().getConditions().length; i++)
+                        for (int i = 0; i < weatherResult.getWeather().getConditions().length; i++)
 //                            Log.i("w", "w " + weatherResult.getWeather().getConditions()[i]);
 
-                        weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
+                            weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
                         int[] array = weatherResult.getWeather().getConditions();
 
                         String s = "Weather: ";
 
-                        for(int i=0;i<array.length;i++) {
+                        for (int i = 0; i < array.length; i++) {
 //                            Log.i("wc", "hi"+array[i]);
 
 
                             switch (array[i]) {
-                                case 1 :
+                                case 1:
                                     s = s.concat("CONDITION_CLEAR");
                                     break;
-                                case 2 :
+                                case 2:
                                     String str = "CONDITION_CLOUDY";
                                     s = s.concat(str);
 //                                    Log.i("wc", "awado");
 //                                    s = "CONDITION_CLOUDY";
                                     break;
-                                case 6 :
+                                case 6:
                                     s = s.concat("CONDITION_RAINY");
                                     break;
-                                case 0 :
+                                case 0:
                                     s = s.concat("CONDITION_UNKNOWN");
                                     break;
-                                case 9 :
+                                case 9:
                                     s = s.concat("CONDITION_WINDY");
                                     break;
                                 default:
@@ -636,12 +621,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             Log.i("LastLocation", "Set to Default Location = Lat 0.0f, Long 0.0f");
             Toast.makeText(this, "Set to Default Location = Lat 0.0f, Long 0.0f", Toast.LENGTH_SHORT).show();
 
-        }
-        else{
-            Log.i("LastLocation", "Lat="+ currentLocation.getLatitude()
-                    +"  Long="+ currentLocation.getLongitude());
-            Toast.makeText(this, "Lat="+ currentLocation.getLatitude()
-                    +"  Long="+ currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+        } else {
+            Log.i("LastLocation", "Lat=" + currentLocation.getLatitude()
+                    + "  Long=" + currentLocation.getLongitude());
+            Toast.makeText(this, "Lat=" + currentLocation.getLatitude()
+                    + "  Long=" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -677,7 +661,7 @@ class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
-        Log.d("HeadphoneFence_BR", "Fence Receiver Received "+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
+        Log.d("HeadphoneFence_BR", "Fence Receiver Received " + fenceState.getCurrentState() + " " + fenceState.getFenceKey());
 //        Log.d("re", "Fence Receiver Received");
 //        pluge = (TextView) findViewById(R.id.pluge);
 //        pluge.setText("Head");
@@ -726,14 +710,13 @@ class LocationFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("home", "Fence Receiver Received before if"+fenceState.getCurrentState()+fenceState.getFenceKey());
+        Log.d("home", "Fence Receiver Received before if" + fenceState.getCurrentState() + fenceState.getFenceKey());
 
 
         if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
 //            try {
             String str = "changed";
-            Log.d("home", "Fence Receiver Received"+fenceState.getCurrentState());
-
+            Log.d("home", "Fence Receiver Received" + fenceState.getCurrentState());
 
 
             switch (fenceState.getCurrentState()) {
@@ -774,7 +757,7 @@ class EnterFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("EnterFence_BR_MA", "Fence Receiver Received"+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
+        Log.d("EnterFence_BR_MA", "Fence Receiver Received" + fenceState.getCurrentState() + " " + fenceState.getFenceKey());
 
 
         if (TextUtils.equals(fenceState.getFenceKey(), "enteringFenceKey")) {
@@ -787,7 +770,7 @@ class EnterFenceBroadcastReceiver extends BroadcastReceiver {
 ////                        pluge.setText("Head");
                         str = "enter";
                         WorkLocationWeatherNotification.notify
-                                        (MainActivity.mainActivity.getApplicationContext(),
+                                (MainActivity.mainActivity.getApplicationContext(),
                                         "You entered home location", 4);
 //
                         break;
@@ -829,7 +812,7 @@ class ExitFenceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("exit", "Fence Receiver Received"+fenceState.getCurrentState());
+        Log.d("exit", "Fence Receiver Received" + fenceState.getCurrentState());
 
         if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
 //            try {
@@ -857,7 +840,6 @@ class ExitFenceBroadcastReceiver extends BroadcastReceiver {
             }
 //
             MainActivity.getInstace().updateTheTextViewexit(str);
-
 
 
         }
