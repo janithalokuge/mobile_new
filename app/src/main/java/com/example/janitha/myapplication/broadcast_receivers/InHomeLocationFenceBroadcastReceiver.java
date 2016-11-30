@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.janitha.myapplication.MainActivity;
-import com.example.janitha.myapplication.WorkLocationWeatherNotification;
-import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.awareness.fence.FenceState;
 
 /**

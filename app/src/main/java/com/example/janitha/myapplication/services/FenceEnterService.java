@@ -4,7 +4,6 @@ package com.example.janitha.myapplication.services;
 import android.Manifest;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,12 +16,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.janitha.myapplication.MainActivity;
-import com.example.janitha.myapplication.WorkLocationWeatherNotification;
 import com.example.janitha.myapplication.broadcast_receivers.EnterFenceBroadcastReceiver;
 import com.example.janitha.myapplication.broadcast_receivers.HeadphoneFenceBroadcastReceiver;
 import com.example.janitha.myapplication.broadcast_receivers.InHomeLocationFenceBroadcastReceiver;
@@ -78,109 +73,6 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
     private HeadphoneFenceBroadcastReceiver headphoneFenceBroadcastReceiver;
     private InHomeLocationFenceBroadcastReceiver inHomeLocationFenceBroadcastReceiver;
 
-    @Override
-    public void onCreate()
-    {
-//        super.onCreate();
-////        ctx = getApplicationContext();
-//        ctx = this;
-//        if(ctx == null){
-//            Log.e("FenceService","ERROR! : Context is NULL");
-//        }
-//        else{
-//            Log.e("FenceService","Context is OK");
-//        }
-//        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-//        prefs = this.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION", Context.MODE_PRIVATE);
-//        json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION", null);
-//        obj = new Gson().fromJson(json, Location.class);
-//
-//        Location homeLocation = (Location) obj;
-//
-//        if (homeLocation == null) {
-//            homeLocation = new Location("EmptyLocation");
-//            homeLocation.setLatitude(0.0f);
-//            homeLocation.setLongitude(0.0f);
-//        }
-//        Log.i("FenceService", "onStartCmd  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
-//
-//        //Getting the HomeLoc Radius
-//        prefs = this.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", Context.MODE_PRIVATE);
-//        json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", null);
-//        obj = new Gson().fromJson(json, Integer.class);
-//        int homeLocationRadius;
-//
-//        if (obj != null) {
-//            homeLocationRadius = (int) obj;
-//        } else {
-//            homeLocationRadius = 99;
-//        }
-//
-//        //TODO
-//
-//        if (googleApiClient == null) {
-//            googleApiClient = new GoogleApiClient.Builder(this)
-//                    .addApi(Awareness.API)
-//                    .addApi(LocationServices.API)
-//                    .addConnectionCallbacks(this)
-//                    .build();
-//
-//            googleApiClient.connect();
-//        }
-//        if (googleApiClient != null) {
-//            Log.i("FenceService", "Google API Client = OK ");
-//        } else {
-//            Log.e("FenceService", "Google API Client = Null ");
-//        }
-//
-//        Intent tempIntent = new Intent(FENCE_RECEIVER_ACTION);
-//        pendingIntent = PendingIntent.getBroadcast(this, 10001, tempIntent, 0);
-//
-//        //------------------ Creating Fences - starts ----------------------- //
-//
-//        // Create a 'LocationFence.entering' Fence.
-//        try {
-//            enterFence = LocationFence.entering(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius);
-//            Log.i("FenceService", "enterFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
-//        } catch (SecurityException e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Create a 'LocationFence.in' Fence.
-//        try {
-//            inHomeLocationFence = LocationFence.in(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius, 1);
-//            Log.i("FenceService", "inHomeLocationFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
-//        } catch (SecurityException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //Create a Headphone fence
-//        headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
-//
-//        //------------------ Creating Fences - ends ----------------------- //
-//
-//        //------------------ Registering Fences - Starts ----------------------- //
-//
-//        //Registering 'LocationFence.entering' Fence
-//        registerFence("enteringFenceKey", enterFence);
-//
-////        registerFence("inHomeLocationFenceKey", inHomeLocationFence);
-//        registerFence("headphoneFenceKey", headphoneFence);
-//
-//
-//        //------------------ Registering Fences - Ends ----------------------- //
-//
-//        enterFenceBroadcastReceiver = new EnterFenceBroadcastReceiver();
-//        registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-//
-//        inHomeLocationFenceBroadcastReceiver = new InHomeLocationFenceBroadcastReceiver();
-////        registerReceiver(inHomeLocationFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-//
-//        headphoneFenceBroadcastReceiver = new HeadphoneFenceBroadcastReceiver();
-//        registerReceiver(headphoneFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-
-
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
