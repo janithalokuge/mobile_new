@@ -47,7 +47,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
     private GoogleMap map;
     private Location currentLocation;
     private Marker currentMarker;
-    private  Circle circle;
+    private Circle circle;
 
     TextView textView_LatitudeValue;
     TextView textView_LongitudeValue;

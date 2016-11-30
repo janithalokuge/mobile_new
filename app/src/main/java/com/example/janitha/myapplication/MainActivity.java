@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -239,6 +240,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                     wifiManager.setWifiEnabled(true);
                     Log.i("wif", "successfully wifi onned");
                 }
+
+                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+//                if (!audioManager) {
+//                    wifiManager.setWifiEnabled(true);
+//                    Log.i("wif", "successfully wifi onned");
+//                }
             }
         });
     }
