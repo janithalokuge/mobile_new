@@ -5,28 +5,28 @@ import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
-import android.os.Parcelable;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.janitha.myapplication.async_tasks.RetrieveLocWeatherTask;
 import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
@@ -42,7 +42,6 @@ import com.google.android.gms.location.LocationServices;
 
 import android.widget.Toast;
 
-import java.security.Security;
 
 import static com.google.android.gms.common.api.GoogleApiClient.*;
 
@@ -141,7 +140,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         updateLocations(this);
 
-//        RetrieveLocWeatherTask homelocWeather = new RetrieveLocWeatherTask(1);
+        // 1 = home location weather update
+        // 2 = work location weather update
         new RetrieveLocWeatherTask(1).execute();
 
 

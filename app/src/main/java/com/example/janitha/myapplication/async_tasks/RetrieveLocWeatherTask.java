@@ -31,7 +31,10 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
     private Double latitude = -0.0;
     private Double longitude= -0.0;
 
+    private int locationType = -1; // 1 = Home Location,  2 = Work Location
     private String result;
+    private String weatherType = "Empty weather type";
+    private String weatherDescription = "Empty weather description";
 
     //case 1 = home location weather
     //case 2 = work location weather
@@ -40,10 +43,13 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
             case 1:
                 latitude = home_loc.getLatitude();
                 longitude = home_loc.getLongitude();
+                locationType= 1;
                 break;
+
             case 2:
                 latitude = work_loc.getLatitude();
                 longitude = work_loc.getLongitude();
+                locationType = 2;
                 break;
         }
     }
@@ -56,8 +62,6 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
     }
 
     protected String doInBackground(Void... urls) {
-        //String email = emailText.getText().toString();
-        // Do some validation here
 
         try {
             URL url = new URL(API_URL +"?"+ "lat=" + latitude +"&"+"lon="+longitude+"&units=metric"+"&appid=" + API_KEY);
@@ -88,9 +92,8 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
         if(response == null) {
             response = "THERE WAS AN ERROR";
         }
-//        progressBar.setVisibility(View.GONE);
+
         Log.i("Web Response", response);
-//        responseView.setText(response);
 
         // TODO: check this.exception
         // TODO: do something with the feed
@@ -183,3 +186,16 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
 //    "name":"Shuzenji",
 //    "cod":200
 //}
+
+/*      Weather Types
+
+    2xx : Thunderstorm
+    3xx : Drizzle
+    5xx : Rain
+    6xx : Snow
+    7xx : Atmosphere
+    8xx : Clouds
+    90x : Extreme (tornado)
+    9xx : Additional (Windy)
+
+ */
