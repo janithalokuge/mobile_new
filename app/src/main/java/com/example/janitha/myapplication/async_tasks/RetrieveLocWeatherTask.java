@@ -1,5 +1,6 @@
 package com.example.janitha.myapplication.async_tasks;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -90,6 +91,7 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
 //        progressBar.setVisibility(View.GONE);
         Log.i("Web Response", response);
 //        responseView.setText(response);
+
         // TODO: check this.exception
         // TODO: do something with the feed
 
@@ -100,24 +102,14 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
         MainActivity.getInstace().updateEditText_message(""+temperature);
 
 
-//            try {
-//                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
-//                String requestID = object.getString("requestId");
-//                int likelihood = object.getInt("likelihood");
-//                JSONArray photos = object.getJSONArray("photos");
-//                .
-//                .
-//                .
-//                .
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+        String weatherType = getWeatherType();
+        String str = MainActivity.getInstace().editText.getText().toString();
+        MainActivity.getInstace().updateEditText_message(str+ " | " +weatherType);
+
 
     }
 
-    public String getResutl(){
-        return result;
-    }
+
 
     private double getTemperature(){
 
@@ -136,6 +128,44 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         return temperature;
+    }
+
+    @SuppressLint("LongLogTag")
+    private String getWeatherType(){
+        String weatherType = "empty";
+
+        try{
+            if (result != null) {
+                Log.i("Result-in-temp", result);
+                JSONObject object = new JSONObject(result);
+                JSONArray weather = object.getJSONArray("weather");
+                weatherType = weather.getJSONObject(0).getString("main");
+                Log.i("Current WeatherType-in-temp", weatherType);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return weatherType;
+    }
+
+    @SuppressLint("LongLogTag")
+    private String getWeatherDescription(){
+        String weatherDescription = "empty";
+
+        try{
+            if (result != null) {
+                Log.i("Result-in-temp", result);
+                JSONObject object = new JSONObject(result);
+                JSONArray weather = object.getJSONArray("weather");
+                weatherDescription = weather.getJSONObject(0).getString("description");
+                Log.i("Current WeatherDes-in-temp", weatherDescription);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return weatherDescription;
     }
 }
 
