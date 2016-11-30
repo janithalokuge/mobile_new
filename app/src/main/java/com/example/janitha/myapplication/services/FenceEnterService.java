@@ -63,7 +63,6 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
     int homeLocationRadius;
     LocationRequest  mLocationRequest;
 
-
     public GoogleApiClient googleApiClient;
     public static Context ctx;
     private PendingIntent pendingIntent;
