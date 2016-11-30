@@ -594,10 +594,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public final static String EXTRA_MESSAGE = "com.example.janitha.myapplication.MESSAGE";
 
     public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText_message);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        Intent intent = new Intent(this, PreferencesActivity.class);
+//        EditText editText = (EditText) findViewById(R.id.editText_message);
+//        String message = editText.getText().toString();
+//        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 

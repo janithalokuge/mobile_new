@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Preferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_weight="0.00"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+    <TextView
+        android:text="Wifi Auto on "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_wifi"
+        android:layout_weight="0.00"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton_wifi" />
+
+
+    <TextView
+        android:text="Sound profile Auto on"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_soundProfile"
+        android:layout_weight="0.00"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton_soundProfile" />
+
+
+    <TextView
+        android:text="Media Player Auto on headphone connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_mediaPlayer"
+        android:layout_weight="0.00"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton_mediaPlayer" />
+</LinearLayout>

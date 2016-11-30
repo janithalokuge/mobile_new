@@ -74,7 +74,7 @@
         </activity>
 
         <activity android:name=".HomeLocationActivity"></activity>
-        <activity android:name=".DisplayMessageActivity"></activity>
+        <activity android:name=".PreferencesActivity"></activity>
 
     </application>
 
