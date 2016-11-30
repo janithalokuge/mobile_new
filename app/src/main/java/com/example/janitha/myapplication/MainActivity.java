@@ -3,30 +3,27 @@ package com.example.janitha.myapplication;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.wifi.WifiManager;
-import android.os.Parcelable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.janitha.myapplication.async_tasks.RetrieveLocWeatherTask;
 import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
@@ -42,9 +39,13 @@ import com.google.android.gms.location.LocationServices;
 
 import android.widget.Toast;
 
-import java.security.Security;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.google.android.gms.common.api.GoogleApiClient.*;
+
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks {
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 
     public static  GoogleApiClient client;
+
     public static Location currentLocation;
 
     public TextView myTextView;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public TextView lon;
     public Button button_home_location;
     public TextView isUserHome;
+    public TextView editText;
 
 
 //    private PendingIntent myPendingIntent;
@@ -70,10 +73,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //    private MyFenceReceiver myFenceReceiver;
 
     public static final String FENCE_RECEIVER_ACTION = "FENCE_RECEIVE";
-    private HeadphoneFenceBroadcastReceiver hfenceReceiver;
-    private LocationFenceBroadcastReceiver fenceReceiver;
-    private ExitFenceBroadcastReceiver efenceReceiver;
-    public static EnterFenceBroadcastReceiver enterFenceBroadcastReceiver;
+
     public static PendingIntent mFencePendingIntent;
 
     public static final String LAST_HOME_LOCATION = "com.example.janitha.myapplication.LOCATION";
@@ -112,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         isUserHome = (TextView) findViewById(R.id.isUserHome);
         isUserHome.setText("Is User Home or not : ");
 
+        editText = (TextView) findViewById(R.id.editText_message);
+
         button_home_location = (Button)findViewById(R.id.button_home_location);
         button_home_location.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
@@ -120,11 +122,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 startActivity(intent);
             }
         });
-
-
-//        pluge = (TextView) findViewById(R.id.pluge);
-//        pluge.setText("Head");
-
 
 
         Log.d("TAG", "onCreate() Restoring previous state");
@@ -149,59 +146,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         updateLocations(this);
 
-//        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
-//        mFencePendingIntent = PendingIntent.getBroadcast(MainActivity.this,
-//                10001,
-//                intent,
-//                0);
-
-//        registerFences(client, mFencePendingIntent, AppData.HOME_LOCATION, AppData.HOME_LOCATION_FENCE_RADIUS);
-
-//        hfenceReceiver = new HeadphoneFenceBroadcastReceiver();
-//        fenceReceiver = new LocationFenceBroadcastReceiver();
-//        enterFenceBroadcastReceiver = new EnterFenceBroadcastReceiver();
-//        efenceReceiver = new ExitFenceBroadcastReceiver();
-
-//        registerReceiver(hfenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-//        registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+//        RetrieveLocWeatherTask homelocWeather = new RetrieveLocWeatherTask(1);
+        new RetrieveLocWeatherTask(1).execute();
 
 
-
-//        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
-//        myPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-//        MyFenceReceiver = new myFenceReceiver();
-//        registerReceiver(myFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-
-//        final PackageManager pm = getPackageManager();
-////get a list of installed apps.
-//        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-//
-//        for (ApplicationInfo packageInfo : packages) {
-//            Log.d("pk", "Installed package :" + packageInfo.packageName);
-//            Log.d("pk", "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-//        }
-//
-//        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.android.camera");
-//        if (launchIntent != null) {
-//            startActivity(launchIntent);//null pointer check in case package name was not found
-//        }
-
-//        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sonyericsson.music");
-//        if (launchIntent != null) {
-//            startActivity(launchIntent);//null pointer check in case package name was not found
-//        }
-
-//        new ParticleSystem(RainActivity.this, 80, R.drawable.rain_drop, 10000)
-//                .setSpeedByComponentsRange(0f, 0f, 0.05f, 0.1f)
-//                .setAcceleration(0.00005f, 90)
-//                .emitWithGravity(findViewById(R.id.cloud), Gravity.BOTTOM, 8);
-
-//        new ParticleSystem(this, numParticles, drawableResId, timeToLive)
-//                .setSpeedRange(0.2f, 0.5f)
-//                .oneShot(anchorView, numParticles);
-
-
-        //Start FenceEnterService Service
         Intent fenceEnterServiceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
         fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
         if (isMyServiceRunning(FenceEnterService.class) == false) {
@@ -253,13 +201,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         });
     }
 
-    public void updateTheTextViewexit(final String t) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                TextView textV1 = (TextView) findViewById(R.id.exit);
-                textV1.setText(t);
-            }
-        });
+    public void updateEditText_message(String str) {
+        editText.setText(str);
     }
 
 
@@ -444,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         updateLocations(mainActivity);
 //        registerFences(client, mFencePendingIntent, AppData.HOME_LOCATION, AppData.HOME_LOCATION_FENCE_RADIUS);
 
-        //WorkLocationWeatherNotification.notify(this, "Ammo", 4);
+        //LocationWeatherNotification.notify(this, "Ammo", 4);
 //        registerReceiver(fenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 //        registerReceiver(efenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 
@@ -655,7 +598,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
+        EditText editText = (EditText) findViewById(R.id.editText_message);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
@@ -671,218 +614,3 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         return false;
     }
 }
-
-class HeadphoneFenceBroadcastReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
-        Log.d("HeadphoneFence_BR", "Fence Receiver Received "+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
-//        Log.d("re", "Fence Receiver Received");
-//        pluge = (TextView) findViewById(R.id.pluge);
-//        pluge.setText("Head");
-
-//        MainActivity mainActivity = (MainActivity)context.getApplicationContext().;
-//        mainActivity.ligaInternet();
-
-        if (TextUtils.equals(fenceState.getFenceKey(), "headphoneFenceKey")) {
-            try {
-                String str = "State";
-                switch (fenceState.getCurrentState()) {
-                    case FenceState.TRUE:
-//                        Log.i("re", "Fence > Headphones are plugged in.");
-//                        pluge.setText("Head");
-                        str = "pluged";
-
-                        break;
-                    case FenceState.FALSE:
-//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
-//                        pluge.setText("Head");
-                        str = "unpluged";
-
-
-                        break;
-                    case FenceState.UNKNOWN:
-//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
-//                        pluge.setText("Head");
-                        str = "dont know";
-                        break;
-                }
-
-                MainActivity.getInstace().updateTheTextView(str);
-
-            } catch (Exception e) {
-
-            }
-
-        }
-    }
-
-}
-
-class LocationFenceBroadcastReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
-
-        Log.d("home", "Fence Receiver Received before if"+fenceState.getCurrentState()+fenceState.getFenceKey());
-
-
-        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
-//            try {
-            String str = "changed";
-            Log.d("home", "Fence Receiver Received"+fenceState.getCurrentState());
-
-
-
-            switch (fenceState.getCurrentState()) {
-                case 1:
-//                        Log.i("re", "Fence > Headphones are plugged in.");
-////                        pluge.setText("Head");
-                    str = "outside";
-//
-                    break;
-                case 2:
-//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
-////                        pluge.setText("Head");
-                    str = "inside";
-//
-//
-                    break;
-                default:
-//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
-////                        pluge.setText("Head");
-                    str = "dont know";
-//                        break;
-            }
-//
-            MainActivity.getInstace().updateTheTextViewhome(str);
-//
-//            } catch (Exception e) {
-//
-//            }
-//
-        }
-    }
-
-}
-
-class EnterFenceBroadcastReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
-
-        Log.d("EnterFence_BR_MA", "Fence Receiver Received"+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
-
-
-        if (TextUtils.equals(fenceState.getFenceKey(), "enteringFenceKey")) {
-            try {
-                String str;
-
-                switch (fenceState.getCurrentState()) {
-                    case 2:
-//                        Log.i("re", "Fence > Headphones are plugged in.");
-////                        pluge.setText("Head");
-                        str = "enter";
-                        WorkLocationWeatherNotification.notify
-                                        (MainActivity.mainActivity.getApplicationContext(),
-                                        "You entered home location", 4);
-//
-                        break;
-                    case 1:
-//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
-////                        pluge.setText("Head");
-                        str = "no-enter";
-//
-//
-                        break;
-                    default:
-//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
-////                        pluge.setText("Head");
-                        str = "dont know";
-//                        break;
-                }
-//
-                MainActivity.getInstace().updateTheTextViewenter(str, context);
-
-
-//                //Start FenceEnterService Service
-//                Intent serviceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
-//                serviceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
-//                MainActivity.mainActivity.startService(serviceIntent);
-
-//
-            } catch (Exception e) {
-//
-            }
-//
-        }
-    }
-
-}
-
-class ExitFenceBroadcastReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
-
-        Log.d("exit", "Fence Receiver Received"+fenceState.getCurrentState());
-
-        if (TextUtils.equals(fenceState.getFenceKey(), "locationFenceKey")) {
-//            try {
-            String str = "changed";
-
-            switch (fenceState.getCurrentState()) {
-                case 1:
-//                        Log.i("re", "Fence > Headphones are plugged in.");
-////                        pluge.setText("Head");
-                    str = "exit";
-//
-                    break;
-                case 2:
-//                        Log.i("re", "Fence > Headphones are NOT plugged in.");
-////                        pluge.setText("Head");
-                    str = "not exit";
-//
-//
-                    break;
-                default:
-//                        Log.i("re", "Fence > The headphone fence is in an unknown state.");
-////                        pluge.setText("Head");
-                    str = "dont know";
-//                        break;
-            }
-//
-            MainActivity.getInstace().updateTheTextViewexit(str);
-
-
-
-        }
-    }
-
-}
-
-
-//public class MyFenceReceiver extends BroadcastReceiver {
-//    @Override
-//    public void onReceive(Context context, Intent intent) {
-//        FenceState fenceState = FenceState.extract(intent);
-//
-//        if (TextUtils.equals(fenceState.getFenceKey(), "headphoneFence")) {
-//            switch(fenceState.getCurrentState()) {
-//                case FenceState.TRUE:
-//                    Log.i(TAG, "Headphones are plugged in.");
-//                    break;
-//                case FenceState.FALSE:
-//                    Log.i(TAG, "Headphones are NOT plugged in.");
-//                    break;
-//                case FenceState.UNKNOWN:
-//                    Log.i(TAG, "The headphone fence is in an unknown state.");
-//                    break;
-//            }
-//        }
-//    }
-//}

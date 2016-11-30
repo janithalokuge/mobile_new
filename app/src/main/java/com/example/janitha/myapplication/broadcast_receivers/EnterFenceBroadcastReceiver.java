@@ -7,8 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.janitha.myapplication.MainActivity;
-import com.example.janitha.myapplication.WorkLocationWeatherNotification;
-import com.example.janitha.myapplication.services.FenceEnterService;
+import com.example.janitha.myapplication.LocationWeatherNotification;
 import com.google.android.gms.awareness.fence.FenceState;
 
 /**
@@ -33,7 +32,7 @@ public class EnterFenceBroadcastReceiver extends BroadcastReceiver {
                 case FenceState.TRUE:
                     //When TRUE
                     str = "Entered HomeLoc";
-                    WorkLocationWeatherNotification.notify(context.getApplicationContext(),"You entered home location", 4);
+                    LocationWeatherNotification.notify(context.getApplicationContext(),"You entered home location", 4);
                     Log.i("EnterFence_BR", "Fence Enter == TRUE");
                     break;
                 case FenceState.FALSE:

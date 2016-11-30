@@ -10,8 +10,7 @@
     </string>
 
     <!-- TODO: remove this placeholder text -->
-    <string name="work_location_weather_notification_placeholder_text_template">You said %1$s and
-        lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. TaHike!!!
+    <string name="work_location_weather_notification_placeholder_text_template">You said %1$s. TaHike!!!
     </string>
 
     <string name="action_share">Share</string>

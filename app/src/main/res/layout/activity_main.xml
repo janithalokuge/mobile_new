@@ -15,11 +15,13 @@
         android:orientation="vertical"
         android:layout_weight="1">
 
-        <EditText android:id="@+id/edit_message"
+        <EditText android:id="@+id/editText_message"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/edit_message" />
+            android:hint="@string/edit_message"
+            android:text="Ammo"
+            android:textColor="?attr/colorAccent" />
 
         <Button
             android:layout_width="wrap_content"
