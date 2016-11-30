@@ -102,12 +102,12 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
         Log.i("Result-after-response", result);
         Double temperature = getTemperature();
 
-        MainActivity.getInstace().updateEditText_message(""+temperature);
-
-
-        String weatherType = getWeatherType();
-        String str = MainActivity.getInstace().editText.getText().toString();
-        MainActivity.getInstace().updateEditText_message(str+ " | " +weatherType);
+//        MainActivity.getInstace().updateEditText_message(""+temperature);
+//
+//
+//        String weatherType = getWeatherType();
+//        String str = MainActivity.getInstace().editText.getText().toString();
+//        MainActivity.getInstace().updateEditText_message(str+ " | " +weatherType);
 
 
     }

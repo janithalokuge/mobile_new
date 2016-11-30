@@ -17,10 +17,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.janitha.myapplication.async_tasks.RetrieveLocWeatherTask;
@@ -55,67 +59,140 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public static GoogleApiClient client;
     public static Location currentLocation;
 
-    public TextView myTextView;
-    public TextView weather;
-    public TextView weatherCondition;
-    public TextView lon;
-    public Button button_home_location;
-    public TextView isUserHome;
-    public TextView editText;
+    public CardView cardView_homeLocationTitle;
+    public ImageView imageView_homeLocationWeatherIcon;
+    public TextView textView_tempHomeLoc;
+    public TextView textView_homeLocWeatherDescription;
 
+    public CardView cardView_workLocationTitle;
+    public ImageView imageView_workLocationWeatherIcon;
+    public TextView textView_tempWorkLoc;
+    public TextView textView_workLocWeatherDescription;
 
-//    private PendingIntent myPendingIntent;
-//    AwarenessFence headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
-//
-//    private MyFenceReceiver myFenceReceiver;
+    public Switch switch_serviceStatus;
+    public Switch switch_trafficAlerts;
+    public Switch switch_soundProfile;
+    public Switch switch_wifiStatus;
 
-    public static final String FENCE_RECEIVER_ACTION = "FENCE_RECEIVE";
+    public Button button_preference;
+    public Button button_workSchedule;
 
-    public static PendingIntent mFencePendingIntent;
+    public TextView textView_headphoneStatus;
+    public TextView textView_wifiStatus;
+    public TextView textView_soundProfileStatus;
+    public TextView textView_userLocationStatus;
+
 
     public static final String LAST_HOME_LOCATION = "com.example.janitha.myapplication.LOCATION";
-
-    private double homeLat = 6.91823;
-    private double homeLon = 79.92891;
-    private double radius = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ins = this;
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.home_activity);
         mainActivity = this;
         mainContext = this;
 
-        String myText = "0";
-        myTextView = (TextView) findViewById(R.id.myTextView);
-        myTextView.setText(myText);
+        cardView_homeLocationTitle = (CardView) findViewById(R.id.cardView_homeLocationTitle);
+        imageView_homeLocationWeatherIcon = (ImageView) findViewById(R.id.imageView_homeLocationWeatherIcon);
+        textView_tempHomeLoc = (TextView) findViewById(R.id.textView_tempHomeLoc);
+        textView_homeLocWeatherDescription = (TextView) findViewById(R.id.textView_homeLocWeatherDescription);
 
-        weather = (TextView) findViewById(R.id.weather);
-        weather.setText(myText);
+        cardView_workLocationTitle = (CardView) findViewById(R.id.cardView_workLocationTitle);
+        imageView_workLocationWeatherIcon = (ImageView) findViewById(R.id.imageView_workLocationWeatherIcon);
+        textView_tempWorkLoc = (TextView) findViewById(R.id.textView_tempWorkLoc);
+        textView_workLocWeatherDescription = (TextView) findViewById(R.id.textView_workLocWeatherDescription);
 
-        weatherCondition = (TextView) findViewById(R.id.weatherCondition);
-        weatherCondition.setText("Unknown conditoin sri lanka");
+        switch_serviceStatus = (Switch) findViewById(R.id.switch_serviceStatus);
+        switch_trafficAlerts = (Switch) findViewById(R.id.switch_trafficAlerts);
+        switch_soundProfile = (Switch) findViewById(R.id.switch_soundProfile);
+        switch_wifiStatus = (Switch) findViewById(R.id.switch_wifiStatus);
 
-        lon = (TextView) findViewById(R.id.lon);
-        lon.setText("location");
+        button_preference = (Button) findViewById(R.id.button_preference);
+        button_workSchedule = (Button) findViewById(R.id.button_workSchedule);
 
-        isUserHome = (TextView) findViewById(R.id.isUserHome);
-        isUserHome.setText("Is User Home or not : ");
+        textView_headphoneStatus = (TextView) findViewById(R.id.textView_headphoneStatus);
+        textView_wifiStatus = (TextView) findViewById(R.id.textView_wifiStatus);
+        textView_soundProfileStatus = (TextView)findViewById(R.id.textView_soundProfileStatus);
+        textView_userLocationStatus = (TextView) findViewById(R.id.textView_userLocationStatus);
 
 
-        editText = (TextView) findViewById(R.id.editText_message);
-
-        button_home_location = (Button)findViewById(R.id.button_home_location);
-        button_home_location.setOnClickListener(new View.OnClickListener(){
+        // card view title click actions  -- starts -- //
+        cardView_homeLocationTitle.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
-
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
                 intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
+                intent.putExtra("UserLocationType",1);
                 startActivity(intent);
             }
         });
+
+        cardView_workLocationTitle.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
+                intent.putExtra("UserLocationType",2);
+                startActivity(intent);
+            }
+        });
+
+        // card view title click actions  -- ends -- //
+
+
+        // Button click actions  -- starts -- //
+        button_preference.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                //please change the invoking activity to Preference Activity
+                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        button_workSchedule.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                //please change the invoking activity to Preference Activity
+                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                startActivity(intent);
+            }
+        });
+        // Button click actions  -- ends -- //
+
+
+        // Switch click actions  -- starts -- //
+        switch_serviceStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO
+
+            }
+        });
+
+        switch_trafficAlerts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO
+
+            }
+        });
+
+        switch_soundProfile.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO
+
+            }
+        });
+
+        switch_wifiStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO
+
+            }
+        });
+
+        // Switch click actions  -- ends -- //
 
 
 
@@ -202,10 +279,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //                }
             }
         });
-    }
-
-    public void updateEditText_message(String str) {
-        editText.setText(str);
     }
 
 
@@ -413,149 +486,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        Log.i("suemar", "OnConnected");
-
-//        Awareness.FenceApi.updateFences(
-//                client,
-//                new FenceUpdateRequest.Builder()
-//                        .addFence("headphoneFenceKey", headphoneFence, myPendingIntent)
-//                        .build())
-//                .setResultCallback(new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(@NonNull Status status) {
-//                        if (status.isSuccess()) {
-//                            Log.i(TAG, "Fence was successfully registered.");
-//                        } else {
-//                            Log.e(TAG, "Fence could not be registered: " + status);
-//                        }
-//                    }
-//                });
-
-        Awareness.SnapshotApi.getHeadphoneState(client)
-                .setResultCallback(new ResultCallback<HeadphoneStateResult>() {
-                    @Override
-                    public void onResult(@NonNull HeadphoneStateResult headphoneStateResult) {
-//                        Log.d("tst", "awa");
-                        if (!headphoneStateResult.getStatus().isSuccess()) {
-//                            Log.i("suemar", "error");
-//                            Log.d("tst2", "gatte na");
-                            return;
-                        }
-//                        Log.d("tst3", "gatta");
-                        HeadphoneState headphoneState = headphoneStateResult.getHeadphoneState();
-//                        Log.i("suemarstat", "headphone status" + headphoneState.getState());
-                        int x = headphoneState.getState();
-                        String y = Integer.toString(x);
-                        myTextView.setText(y);
-                    }
-                });
-
-        Awareness.SnapshotApi.getLocation(client)
-                .setResultCallback(new ResultCallback<LocationResult>() {
-                    @Override
-                    public void onResult(@NonNull LocationResult locationResult) {
-                        if (!locationResult.getStatus().isSuccess()) {
-                            Log.e("lo", "Could not get location.");
-                            return;
-                        }
-                        Location location = locationResult.getLocation();
-//                        Log.i("lol", "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude());
-
-                        String s = "Lat ";
-                        String s1 = Double.toString(location.getLatitude());
-                        s = s.concat(s1);
-                        s = s.concat(" Lon ");
-                        String s2 = Double.toString(location.getLongitude());
-                        s = s.concat(s2);
-
-                        Double lat = location.getLatitude();
-                        Double longitude = location.getLongitude();
-//                        Location.c
-
-                        double ltd = lat - homeLat;
-                        double lgd = longitude - homeLon;
-
-//                        Math.pow(2.4,3);
-
-//                        double d = Math.sqrt(Math.pow(ltd, 2) + Math.pow(lgd, 2));
-
-                        double earthRadius = 6371000; //meters
-                        double dLat = Math.toRadians(lat - homeLat);
-                        double dLng = Math.toRadians(longitude - homeLon);
-                        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                                Math.cos(Math.toRadians(homeLat)) * Math.cos(Math.toRadians(lat)) *
-                                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
-                        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                        float dist = (float) (earthRadius * c);
-
-//                        return dist;
-
-//                        float[] reulsts = Location.distanceBetween(lat, lon, lat, lon);
-//                        Location.distanceBetween(location.getLatitude(), location.getLongitude(), homeLat, homeLon);
-
-
-                        if (dist < radius) {
-                            isUserHome.setText("Is User Home or not : Yes");
-                        } else {
-                            isUserHome.setText("Is User Home or not : NO");
-                        }
-
-                        lon.setText(s);
-
-                    }
-                });
-
-        Awareness.SnapshotApi.getWeather(client)
-                .setResultCallback(new ResultCallback<WeatherResult>() {
-                    @Override
-                    public void onResult(@NonNull WeatherResult weatherResult) {
-//                        Log.d("w", "awa");
-                        if (!weatherResult.getStatus().isSuccess()) {
-//                            Log.i("w", "error weather");
-                            return;
-                        }
-                        for (int i = 0; i < weatherResult.getWeather().getConditions().length; i++)
-//                            Log.i("w", "w " + weatherResult.getWeather().getConditions()[i]);
-
-                            weather.setText(Float.toString(weatherResult.getWeather().getTemperature(Weather.CELSIUS)));
-                        int[] array = weatherResult.getWeather().getConditions();
-
-                        String s = "Weather: ";
-
-                        for (int i = 0; i < array.length; i++) {
-//                            Log.i("wc", "hi"+array[i]);
-
-
-                            switch (array[i]) {
-                                case 1:
-                                    s = s.concat("CONDITION_CLEAR");
-                                    break;
-                                case 2:
-                                    String str = "CONDITION_CLOUDY";
-                                    s = s.concat(str);
-//                                    Log.i("wc", "awado");
-//                                    s = "CONDITION_CLOUDY";
-                                    break;
-                                case 6:
-                                    s = s.concat("CONDITION_RAINY");
-                                    break;
-                                case 0:
-                                    s = s.concat("CONDITION_UNKNOWN");
-                                    break;
-                                case 9:
-                                    s = s.concat("CONDITION_WINDY");
-                                    break;
-                                default:
-                                    s = s.concat(Integer.toString(array[i]));
-
-
-                            }
-                        }
-
-                        weatherCondition.setText(s);
-
-                    }
-                });
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
