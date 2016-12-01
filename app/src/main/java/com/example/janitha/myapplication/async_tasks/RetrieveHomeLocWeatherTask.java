@@ -111,8 +111,9 @@ public class RetrieveHomeLocWeatherTask extends AsyncTask<Void, Void, String> {
         switch (locationType) {
             case 1:
                 MainActivity.getInstace().textView_tempHomeLoc.setText(""+temperature+"°C");
-                MainActivity.getInstace().textView_homeLocWeatherDescription.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
                 MainActivity.getInstace().textView_homeLocWeatherDescription.setText(weatherDescription);
+                MainActivity.getInstace().textView_homeLocWeatherDescription.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
+//                MainActivity.getInstace().textView_homeLocWeatherDescription.setText(weatherDescription);
                 MainActivity.getInstace().textView_homeLocWeatherDescription.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE );
                 updateWeatherIcon(weatherType);
                 Log.i("HomeLocWeather",weatherType);
@@ -223,6 +224,8 @@ public class RetrieveHomeLocWeatherTask extends AsyncTask<Void, Void, String> {
                 break;
             case "Clear":
                 ICON = R.drawable.sunny;
+            case "Mist":
+                ICON = R.drawable.cloudy;
 
             default:
                 //print log error message

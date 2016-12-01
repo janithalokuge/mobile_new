@@ -9,7 +9,7 @@
     </string>
 
     <!-- TODO: remove this placeholder text -->
-    <string name="work_location_weather_notification_placeholder_text_template">You said %1$s. TaHike!!!
+    <string name="work_location_weather_notification_placeholder_text_template">Info: %1$s. !
     </string>
 
     <string name="action_share">Share</string>

@@ -9,3 +9,4 @@
 /captures
 gen/
 /app/src/main/res/drawable/weather_icons/Thumbs.db
+*.psd

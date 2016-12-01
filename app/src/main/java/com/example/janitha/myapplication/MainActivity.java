@@ -159,6 +159,23 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //TODO
+                Intent fenceEnterServiceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
+                fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus", "User entered Home Location area");
+
+                if(switch_serviceStatus.isChecked()) {
+                    //Start FenceEnterService Service
+                    getApplicationContext().startService(fenceEnterServiceIntent);
+                    if (isMyServiceRunning(FenceEnterService.class)) {
+                        Toast.makeText(getApplicationContext(), "Background service started",Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Error: Background service start error!",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    getApplicationContext().stopService(new Intent(getApplicationContext(),FenceEnterService.class));
+                    Toast.makeText(getApplicationContext(), "Background service stopped",Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -222,7 +239,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         Intent fenceEnterServiceIntent = new Intent(MainActivity.mainActivity, FenceEnterService.class);
         fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus", "User entered Home Location area");
         if (isMyServiceRunning(FenceEnterService.class) == false) {
+            switch_serviceStatus.setChecked(false);
             getApplicationContext().startService(fenceEnterServiceIntent);
+        }
+        else{
+            switch_serviceStatus.setChecked(true);
         }
 
         updateTextView_wifiStatus(this);

@@ -27,6 +27,7 @@ public class LocationWeatherNotification {
      * The unique identifier for this type of notification.
      */
     private static final String NOTIFICATION_TAG = "WorkLocationWeather";
+    private  static String currentLocation =  "ragama";
 
     /**
      * Shows the notification, or updates a previously shown notification of
@@ -99,7 +100,9 @@ public class LocationWeatherNotification {
                         PendingIntent.getActivity(
                                 context,
                                 0,
-                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+//                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+                                new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.worldweatheronline.com/"+currentLocation+"-weather/western/lk.aspx")),
+//                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.accuweather.com/en/lk/"+currentLocation+"/311401/weather-forecast/311401")),
                                 PendingIntent.FLAG_UPDATE_CURRENT))
 
                 // Show expanded text content on devices running Android 4.1 or
