@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         button_preference.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 //please change the invoking activity to Preference Activity
-                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
                 startActivity(intent);
             }
         });
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         button_workSchedule.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 //please change the invoking activity to Preference Activity
-                Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
+                Intent intent = new Intent(MainActivity.this, WorkSheduleActivity.class);
                 startActivity(intent);
             }
         });

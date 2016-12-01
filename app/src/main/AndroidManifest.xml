@@ -75,6 +75,7 @@
 
         <activity android:name=".HomeLocationActivity"></activity>
         <activity android:name=".PreferencesActivity"></activity>
+        <activity android:name=".WorkSheduleActivity"></activity>
 
     </application>
 

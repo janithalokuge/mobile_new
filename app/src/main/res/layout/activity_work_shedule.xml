@@ -3,4 +3,45 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:text="Work Shedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <TextView
+        android:text="Monday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView15"
+        android:textAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded" />
+
+    <TextView
+        android:text="Tuesday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView16"
+        android:textAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded" />
+
+    <TextView
+        android:text="Wednesday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView17"
+        android:textAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded" />
+
+    <TextView
+        android:text="Thursday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView18"
+        android:textAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded" />
+
+    <TextView
+        android:text="Friday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView19"
+        android:textAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded" />
 </LinearLayout>
