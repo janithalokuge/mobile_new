@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         cardView_workLocationTitle.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
-                intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
+                intent.putExtra(LAST_HOME_LOCATION, AppData.WORK_LOCATION);
                 intent.putExtra("UserLocationType",2);
                 startActivity(intent);
             }
@@ -269,14 +269,16 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
                 if (!wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(true);
-                    Log.i("wif", "successfully wifi onned");
+//                    Log.i("wif", "successfully wifi onned");
+                    Toast.makeText(context, "Wifi Turned on", Toast.LENGTH_SHORT).show();
                     textView_wifiStatus.setText("ON");
-                } else {
-                    textView_wifiStatus.setText("OFF");
                 }
 
                 AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+                Toast.makeText(context, "Sound profile: Normal", Toast.LENGTH_SHORT).show();
+
 
                 if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                     textView_soundProfileStatus.setText("NORMAL");
