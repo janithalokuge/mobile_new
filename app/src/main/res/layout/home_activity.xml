@@ -71,18 +71,19 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:text="28°C"
+                            android:text="-28.3°C"
+                            android:inputType="textCapSentences"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:id="@+id/textView_tempHomeLoc"
                             android:textStyle="normal|bold"
-                            android:textSize="30sp"
+                            android:textSize="25sp"
                             android:textAlignment="center"
                             android:gravity="center_vertical" />
 
                         <TextView
-                            android:text="Mostly Cloudy"
+                            android:text="Mostly rain"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -90,7 +91,8 @@
                             android:textAlignment="center"
                             android:gravity="center_vertical"
                             android:textSize="18sp"
-                            android:textStyle="normal|bold" />
+                            android:textStyle="normal|bold"
+                            android:inputType="text|textCapSentences|textMultiLine" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -150,18 +152,19 @@
                     android:weightSum="2">
 
                     <TextView
-                        android:text="28°C"
+                        android:text="-28.7°C"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:id="@+id/textView_tempWorkLoc"
                         android:textStyle="normal|bold"
-                        android:textSize="30sp"
+                        android:textSize="25sp"
                         android:textAlignment="center"
                         android:gravity="center_vertical" />
 
                     <TextView
                         android:text="Mostly Cloudy"
+                        android:inputType="textCapSentences|textMultiLine"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -169,7 +172,8 @@
                         android:textAlignment="center"
                         android:gravity="center_vertical"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal|bold"
+                        android:textAllCaps="false" />
 
                 </LinearLayout>
 

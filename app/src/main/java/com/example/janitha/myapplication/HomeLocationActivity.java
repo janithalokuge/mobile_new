@@ -133,7 +133,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                         //print log error message
                 }
 
-                updateHomeLocation(tempLocation);
+//                updateHomeLocation(tempLocation);
 
             }
         });

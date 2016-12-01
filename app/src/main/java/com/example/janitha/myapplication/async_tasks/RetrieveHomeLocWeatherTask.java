@@ -3,10 +3,14 @@ package com.example.janitha.myapplication.async_tasks;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.renderscript.ScriptGroup;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.Switch;
 
 import com.example.janitha.myapplication.AppData;
 import com.example.janitha.myapplication.MainActivity;
+import com.example.janitha.myapplication.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +26,7 @@ import java.net.URL;
  * Created by Siri on 11/30/2016.
  */
 
-public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
+public class RetrieveHomeLocWeatherTask extends AsyncTask<Void, Void, String> {
     //sample url: http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=9fc5df99167e35be92d976d89c19f89f
     private String API_KEY = "9fc5df99167e35be92d976d89c19f89f";
     private String API_URL = "http://api.openweathermap.org/data/2.5/weather";
@@ -38,7 +42,7 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
 
     //case 1 = home location weather
     //case 2 = work location weather
-    public RetrieveLocWeatherTask(int type){
+    public RetrieveHomeLocWeatherTask(int type){
         switch (type){
             case 1:
                 latitude = home_loc.getLatitude();
@@ -101,13 +105,30 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
         result = response;
         Log.i("Result-after-response", result);
         Double temperature = getTemperature();
+        String weatherType = getWeatherType();
+        String weatherDescription  = getWeatherDescription();
 
-//        MainActivity.getInstace().updateEditText_message(""+temperature);
-//
-//
-//        String weatherType = getWeatherType();
-//        String str = MainActivity.getInstace().editText.getText().toString();
-//        MainActivity.getInstace().updateEditText_message(str+ " | " +weatherType);
+        switch (locationType) {
+            case 1:
+                MainActivity.getInstace().textView_tempHomeLoc.setText(""+temperature+"°C");
+                MainActivity.getInstace().textView_homeLocWeatherDescription.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
+                MainActivity.getInstace().textView_homeLocWeatherDescription.setText(weatherDescription);
+                MainActivity.getInstace().textView_homeLocWeatherDescription.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE );
+                updateWeatherIcon(weatherType);
+                Log.i("HomeLocWeather",weatherType);
+                break;
+
+            case 2:
+                MainActivity.getInstace().textView_tempWorkLoc.setText(""+temperature+"°C");
+                MainActivity.getInstace().textView_workLocWeatherDescription.setText(weatherDescription);
+                updateWeatherIcon(weatherType);
+                Log.i("WorkLocWeather",weatherType);
+                break;
+
+            default:
+                //print log error message for debugging
+
+        }
 
 
     }
@@ -169,6 +190,56 @@ public class RetrieveLocWeatherTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         return weatherDescription;
+    }
+
+    private void updateWeatherIcon(String weatherType){
+
+        int ICON = R.drawable.ic_stat_work_location_weather; //default icon
+
+        switch (weatherType){
+            case "Thunderstorm":
+                ICON = R.drawable.thunderstorms;
+                break;
+            case "Drizzle":
+                ICON = R.drawable.drizzle;
+                break;
+            case "Rain":
+                ICON = R.drawable.drizzle;
+                break;
+            case "Snow":
+                ICON = R.drawable.snow;
+                break;
+            case "Atmosphere":
+                ICON = R.drawable.sunny;
+                break;
+            case "Clouds":
+                ICON = R.drawable.cloudy;
+                break;
+            case "Extreme":
+                ICON = R.drawable.thunderstorms;
+                break;
+            case "Additional":
+                ICON = R.drawable.haze;
+                break;
+            case "Clear":
+                ICON = R.drawable.sunny;
+
+            default:
+                //print log error message
+        }
+
+        switch (locationType) {
+
+            case 1:
+                MainActivity.getInstace().imageView_homeLocationWeatherIcon.setImageResource(ICON);
+                break;
+
+            case 2:
+                MainActivity.getInstace().imageView_workLocationWeatherIcon.setImageResource(ICON);
+                break;
+            default:
+                //print log error message
+        }
     }
 }
 
