@@ -228,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         if (isMyServiceRunning(FenceEnterService.class) == false) {
             getApplicationContext().startService(fenceEnterServiceIntent);
         }
+
+        updateTextView_wifiStatus(this);
     }
 
     public static MainActivity getInstace() {
@@ -261,17 +263,26 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public void updateTheTextViewenter(final String t, final Context context) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                TextView textV1 = (TextView) findViewById(R.id.enter);
-                textV1.setText(t);
+//                TextView textV1 = (TextView) findViewById(R.id.enter);
+//                textV1.setText(t);
                 WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
                 if (!wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(true);
                     Log.i("wif", "successfully wifi onned");
+                    textView_wifiStatus.setText("ON");
+                } else {
+                    textView_wifiStatus.setText("OFF");
                 }
 
                 AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+                if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                    textView_soundProfileStatus.setText("NORMAL");
+                } else {
+                    textView_soundProfileStatus.setText("SILENT");
+                }
 
 //                if (!audioManager) {
 //                    wifiManager.setWifiEnabled(true);
@@ -280,6 +291,40 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             }
         });
     }
+
+    public void updateTextView_wifiStatus(final Context context) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+//                TextView textV1 = (TextView) findViewById(R.id.enter);
+//                textV1.setText(t);
+                WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+                if (wifiManager.isWifiEnabled()) {
+//                    wifiManager.setWifiEnabled(true);
+                    Log.i("wif", "successfully wifi onned");
+                    textView_wifiStatus.setText("ON");
+                } else {
+                    textView_wifiStatus.setText("OFF");
+                }
+
+                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+//                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+                if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                    textView_soundProfileStatus.setText("NORMAL");
+                } else {
+                    textView_soundProfileStatus.setText("SILENT");
+                }
+
+//                if (!audioManager) {
+//                    wifiManager.setWifiEnabled(true);
+//                    Log.i("wif", "successfully wifi onned");
+//                }
+            }
+        });
+    }
+
+
 
 
     public static void registerFences(GoogleApiClient apiClient, PendingIntent pendingIntent, Location homeLocation, int homeLocationRadius) {

@@ -48,7 +48,7 @@ public class EnterHomeLocationFenceBroadcastReceiver extends BroadcastReceiver {
             }
 
             try {
-//                MainActivity.getInstace().updateTheTextViewenter(str, context);
+                MainActivity.getInstace().updateTheTextViewenter(str, context);
                 //TODO
 
             } catch (NullPointerException e) {

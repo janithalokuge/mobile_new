@@ -330,10 +330,10 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:text="Headphone: "
+                            android:text="Sound Profile: "
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView11"
+                            android:id="@+id/textView13"
                             android:textSize="14sp"
                             android:paddingLeft="4dp"
                             android:layout_margin="2dp" />
@@ -348,13 +348,15 @@
                             android:layout_margin="2dp" />
 
                         <TextView
-                            android:text="Sound Profile: "
+                            android:text="Headphone: "
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView13"
+                            android:id="@+id/textView11"
                             android:textSize="14sp"
                             android:paddingLeft="4dp"
                             android:layout_margin="2dp" />
+
+
 
                     </LinearLayout>
 
@@ -365,10 +367,10 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:text="Plugged"
+                            android:text="Silent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView_headphoneStatus"
+                            android:id="@+id/textView_soundProfileStatus"
                             android:textSize="14sp"
                             android:paddingLeft="4dp"
                             android:layout_margin="2dp" />
@@ -383,13 +385,15 @@
                             android:layout_margin="2dp" />
 
                         <TextView
-                            android:text="Silent"
+                            android:text="Plugged"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView_soundProfileStatus"
+                            android:id="@+id/textView_headphoneStatus"
                             android:textSize="14sp"
                             android:paddingLeft="4dp"
                             android:layout_margin="2dp" />
+
+
 
                     </LinearLayout>
 
@@ -398,7 +402,6 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
 
                         <TextView
                             android:text="User Location"
