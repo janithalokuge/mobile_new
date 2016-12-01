@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -23,7 +24,6 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,46 +52,24 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
     TextView textView_LatitudeValue;
     TextView textView_LongitudeValue;
     EditText editText_FenceRadius;
+    TextView textView_locationTpe;
     Button button_UpdateLocation;
+
     String fenceSettingsRadius = "500m";
+
+    private int locationType = -1;
+
     private int fenceRadius;
 
-    Switch switch_HomeWork;
-    TextView switchStatus;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_location);
 
-        switch_HomeWork = (Switch) findViewById(R.id.switch_HomeWork);
-        switchStatus = (TextView) findViewById(R.id.switchStatus);
-
-        //set the switch to ON
-        switch_HomeWork.setChecked(true);
-        //attach a listener to check for changes in state
-        switch_HomeWork.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-
-                if(isChecked){
-                    switchStatus.setText("Switch is currently ON");
-                }else{
-                    switchStatus.setText("Switch is currently OFF");
-                }
-
-            }
-        });
-
-        //check the current state before we display the screen
-        if(switch_HomeWork.isChecked()){
-            switchStatus.setText("Switch is currently ON");
-        }
-        else {
-            switchStatus.setText("Switch is currently OFF");
-        }
+        Intent tempIntent =getIntent();
+        locationType = tempIntent.getIntExtra("UserLocationType",-1);
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_home_map);
         mapFragment.getMapAsync(this);
@@ -102,14 +80,38 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         textView_LongitudeValue = (TextView)findViewById(R.id.textView_LongitudeValue);
         editText_FenceRadius = (EditText)findViewById(R.id.editText_FenceRadius);
         //fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-        if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
-            fenceRadius = (int)AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
-        }
-        else{
-            fenceRadius = 100;
+        textView_locationTpe = (TextView) findViewById(R.id.textView_locationTpe);
+
+
+        switch (locationType) {
+            case 1:
+                textView_locationTpe.setText("Home Location");
+                if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
+                    fenceRadius = (int)AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, Integer.class);
+                }
+                else{
+                    fenceRadius = 100;
+                    //print a log message for debugging
+                }
+                break;
+
+            case 2:
+                textView_locationTpe.setText("Work Location");
+                if(AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class) != null){
+                    fenceRadius = (int)AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, Integer.class);
+                }
+                else{
+                    fenceRadius = 100;
+                    //print a log message for debugging
+                }
+                break;
+
+            default:
+                textView_locationTpe.setText("Cannot Detect Location Type");
+                //print a log message for debugging
         }
 
-        editText_FenceRadius.setText(""+fenceRadius);
+        editText_FenceRadius.setText(""+ fenceRadius);
 
 
         button_UpdateLocation.setOnClickListener(new View.OnClickListener() {
@@ -119,65 +121,27 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 tempLocation.setLatitude(currentMarker.getPosition().latitude);
                 tempLocation.setLongitude(currentMarker.getPosition().longitude);
 
-                if (AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, tempLocation)) {
-                    Toast.makeText(currentContext, "Home Location LatLng updated", Toast.LENGTH_SHORT).show();
-                    if(AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
-                        Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
-                        button_UpdateLocation.setEnabled(false);
+                switch(locationType){
+                    case 1:
+                        updateHomeLocation(tempLocation);
+                        break;
 
-                        //Restart FenceEnter Service to update the Location Fence details
-                        Intent fenceEnterServiceIntent = new Intent(currentActivity, FenceEnterService.class);
-                        fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
-                        currentContext.startService(fenceEnterServiceIntent);
+                    case 2:
+                        updateWorkLocation(tempLocation);
+                        break;
+                    default:
+                        //print log error message
+                }
 
-                    }
-                    else{
-                        Toast.makeText(currentContext, "Error while updating Home Location Radius!", Toast.LENGTH_LONG).show();
-                    }
-                }
-                else {
-                    Toast.makeText(currentContext, "Error while saving Home Location!", Toast.LENGTH_LONG).show();
-                }
+                updateHomeLocation(tempLocation);
 
             }
         });
 
-        //move this method to mapReady method
-//        editText_FenceRadius.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                if(AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-//                    currentLocation =(Location) AppData.getData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, Location.class);
-//                } else {
-//                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
-//                }
-//                LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//
-//
-//                try {
-//                    fenceRadius = Integer.parseInt(editText_FenceRadius.getText().toString());
-//                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), fenceRadius);
-//                }
-//                catch (NumberFormatException e) { // When converting a null string to int
-//                    e.printStackTrace();
-//                    drawCircle(new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 0);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                button_UpdateLocation.setEnabled(true);
-//            }
-//        });
 
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap tempMap){
@@ -185,10 +149,26 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 //        Location currentLocation = MainActivity.currentLocation;
 
-        if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-            currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
-        } else {
-            currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+        switch (locationType) {
+            case 1:
+                if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+                    currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
+                } else {
+                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                }
+                break;
+
+            case 2:
+                if(AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN, Location.class) != null) {
+                    currentLocation =(Location) AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN, Location.class);
+                } else {
+                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                }
+                break;
+
+            default:
+                Log.e("HomeLoc Activity","User Location Error!");
+
         }
 
         LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -213,7 +193,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
 
         updateLatLng();
 
-        drawCircle(initialLatLng,fenceRadius);  //draw the (circular)boundary of the Fence
+        drawCircle(initialLatLng, fenceRadius);  //draw the (circular)boundary of the Fence
 
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -221,7 +201,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 button_UpdateLocation.setEnabled(true);
                 drawMarker(latLng);
                 updateLatLng();
-                drawCircle(latLng,fenceRadius);
+                drawCircle(latLng, fenceRadius);
             }
         });
 
@@ -234,11 +214,28 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
-                    currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
-                } else {
-                    currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                switch (locationType) {
+                    case 1:
+                        if(AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class) != null) {
+                            currentLocation =(Location) AppData.getData(currentContext,AppData.STR_HOME_LOCATOIN, Location.class);
+                        } else {
+                            currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                        }
+                        break;
+
+                    case 2:
+                        if(AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN, Location.class) != null) {
+                            currentLocation =(Location) AppData.getData(currentContext,AppData.STR_WORK_LOCATOIN, Location.class);
+                        } else {
+                            currentLocation = getIntent().getExtras().getParcelable(MainActivity.LAST_HOME_LOCATION);
+                        }
+                        break;
+
+                    default:
+                        //print log error message
                 }
+
+
                 LatLng initialLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
 
@@ -259,7 +256,7 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
         });
     }
 
-    public void drawMarker(LatLng latLng){
+    private void drawMarker(LatLng latLng){
         currentMarker.remove();
         currentMarker = map.addMarker(new MarkerOptions()
                 .position(latLng)
@@ -267,14 +264,14 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                 .draggable(true));
     }
 
-    public void updateLatLng(){
+    private void updateLatLng(){
         if(currentMarker !=null){
             textView_LatitudeValue.setText(new DecimalFormat("#.000").format(currentMarker.getPosition().latitude));
             textView_LongitudeValue.setText(new DecimalFormat("#.000").format(currentMarker.getPosition().longitude));
         }
     }
 
-    public void drawCircle(LatLng latLng, int radius){
+    private void drawCircle(LatLng latLng, int radius){
         if(currentMarker != null){
             if (circle != null) {
                 circle.remove();
@@ -287,5 +284,51 @@ public class HomeLocationActivity extends AppCompatActivity implements OnMapRead
                     .strokeWidth(7));
         }
 
+    }
+
+    private void updateHomeLocation(Location tempLocation) {
+        if (AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN, tempLocation)) {
+            Toast.makeText(currentContext, "Home Location LatLng updated", Toast.LENGTH_SHORT).show();
+            if(AppData.saveData(getApplicationContext(),AppData.STR_HOME_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
+                Toast.makeText(currentContext, "Home Location Fence Radius updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(currentContext, "Home Location saved successfully", Toast.LENGTH_LONG).show();
+                button_UpdateLocation.setEnabled(false);
+
+                //Restart FenceEnter Service to update the Location Fence details
+                Intent fenceEnterServiceIntent = new Intent(currentActivity, FenceEnterService.class);
+                fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
+                currentContext.startService(fenceEnterServiceIntent);
+
+            }
+            else{
+                Toast.makeText(currentContext, "Error while updating Home Location Radius!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Toast.makeText(currentContext, "Error while saving Home Location!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void updateWorkLocation(Location tempLocation) {
+        if (AppData.saveData(getApplicationContext(),AppData.STR_WORK_LOCATOIN, tempLocation)) {
+            Toast.makeText(currentContext, "Work Location LatLng updated", Toast.LENGTH_SHORT).show();
+            if(AppData.saveData(getApplicationContext(),AppData.STR_WORK_LOCATOIN_FENCE_RADIUS, new Integer( editText_FenceRadius.getText().toString() ))) {
+                Toast.makeText(currentContext, "Work Location Fence Radius updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(currentContext, "Work Location saved successfully", Toast.LENGTH_LONG).show();
+                button_UpdateLocation.setEnabled(false);
+
+                //Restart FenceEnter Service to update the Location Fence details
+                Intent fenceEnterServiceIntent = new Intent(currentActivity, FenceEnterService.class);
+                fenceEnterServiceIntent.putExtra("HomeLocation_FenceEnterStatus","User entered Home Location area");
+                currentContext.startService(fenceEnterServiceIntent);
+
+            }
+            else{
+                Toast.makeText(currentContext, "Error while updating Work Location Radius!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Toast.makeText(currentContext, "Error while saving Work Location!", Toast.LENGTH_LONG).show();
+        }
     }
 }
