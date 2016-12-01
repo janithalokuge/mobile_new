@@ -15,22 +15,6 @@
     android:isScrollContainer="false"
     android:weightSum="1">
 
-    <Switch
-        android:text="Switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch_HomeWork" />
-
-    <TextView
-        android:id="@+id/switchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/mySwitch"
-        android:layout_marginTop="22dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -40,7 +24,7 @@
             android:text="@string/textview_home_location_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView_HomeLocationTitle"
+            android:id="@+id/textView_locationTpe"
             android:textSize="24sp"
             android:textColor="#000000" />
 

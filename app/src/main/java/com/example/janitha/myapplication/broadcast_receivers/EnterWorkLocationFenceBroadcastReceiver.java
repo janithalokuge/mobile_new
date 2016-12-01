@@ -11,7 +11,7 @@ import com.example.janitha.myapplication.LocationWeatherNotification;
 import com.google.android.gms.awareness.fence.FenceState;
 
 /**
- * Created by Siri on 11/7/2016.
+ * Created by Siri on 1/12/2016.
  */
 
 // Handle the callback on the Intent.
