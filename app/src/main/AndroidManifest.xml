@@ -36,7 +36,7 @@
             android:label="Fence_Enter_Service"/>
 
 
-        <!--<receiver android:name="com.example.janitha.myapplication.services.EnterFenceBroadcastReceiver" >-->
+        <!--<receiver android:name="com.example.janitha.myapplication.services.EnterHomeLocationFenceBroadcastReceiver" >-->
             <!--<intent-filter>-->
                 <!--<action android:name="com.example.janitha.myapplication.FENCE_RECEIVE" />-->
             <!--</intent-filter>-->

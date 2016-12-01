@@ -15,43 +15,45 @@ import com.google.android.gms.awareness.fence.FenceState;
  */
 
 // Handle the callback on the Intent.
-public class EnterFenceBroadcastReceiver extends BroadcastReceiver {
+public class ExitWorkLocationFenceBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         FenceState fenceState = FenceState.extract(intent);
 
-        Log.d("EnterFence_BR", "Fence Receiver Received "+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
+        Log.d("ExitWorkLocFence_BR", "Fence Receiver Received "+fenceState.getCurrentState()+" "+fenceState.getFenceKey());
 
 
-        if (TextUtils.equals(fenceState.getFenceKey(), "enteringFenceKey")) {
+        if (TextUtils.equals(fenceState.getFenceKey(), "exitWorkLocationFenceKey")) {
             String str;
 
             switch (fenceState.getCurrentState()) {
                 case FenceState.TRUE:
                     //When TRUE
-                    str = "Entered HomeLoc";
+                    str = "Left WorkLoc";
                     LocationWeatherNotification.notify(context.getApplicationContext(),"You entered home location", 4);
-                    Log.i("EnterFence_BR", "Fence Enter == TRUE");
+                    Log.i("ExitWorkLocFence_BR", "Fence Enter == TRUE");
                     break;
                 case FenceState.FALSE:
                     //When False
-                    str = "Left HomeLoc";
-                    Log.i("EnterFence_BR", "Fence Enter == FLASE");
+                    str = "In or outside WorkLoc";
+                    Log.i("ExitWorkLocFence_BR", "Fence Enter == FLASE");
                     break;
 
                 default:
                     str = "Couldn't Detect!!!";
-                    Log.i("EnterFence_BR", "Fence Enter == UNKNOWN");
+                    Log.i("ExitWorkLocFence_BR", "Fence Enter == UNKNOWN");
                     break;
             }
 
             try {
-                MainActivity.getInstace().updateTheTextViewenter(str, context);
+//                MainActivity.getInstace().updateTheTextViewenter(str, context);
+                //TODO
+
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                Log.e("EnterFence_BR", "Main Activity = Null !");
+                Log.e("ExitWorkLocFence_BR", "Main Activity = Null !");
             }
         }
     }

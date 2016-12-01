@@ -18,7 +18,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.janitha.myapplication.broadcast_receivers.EnterFenceBroadcastReceiver;
+import com.example.janitha.myapplication.broadcast_receivers.EnterHomeLocationFenceBroadcastReceiver;
+import com.example.janitha.myapplication.broadcast_receivers.ExitHomeLocationFenceBroadcastReceiver;
 import com.example.janitha.myapplication.broadcast_receivers.HeadphoneFenceBroadcastReceiver;
 import com.example.janitha.myapplication.broadcast_receivers.InHomeLocationFenceBroadcastReceiver;
 
@@ -55,23 +56,34 @@ import static android.provider.Settings.System.DATE_FORMAT;
  */
 
 public class FenceEnterService extends Service implements GoogleApiClient.ConnectionCallbacks,LocationListener {
-    SharedPreferences prefs;
-    String json;
-    Object obj;
-    static int count = 0;
+    private SharedPreferences prefs;
+    private String json;
+    private Object obj;
+    private static int count = 0;
     public static final String FENCE_RECEIVER_ACTION = "com.example.janitha.myapplication.FENCE_RECEIVE";
-    int homeLocationRadius;
-    LocationRequest  mLocationRequest;
+
+    private Location homeLocation;
+    private Location workLocation;
+    private int homeLocationRadius;
+    private int workLocationRadius;
 
     public GoogleApiClient googleApiClient;
     public static Context ctx;
     private PendingIntent pendingIntent;
-    private AwarenessFence enterFence;
+
+    private AwarenessFence enterHomeLocationFence;
     private AwarenessFence inHomeLocationFence;
-    private AwarenessFence headphoneFence;
-    private EnterFenceBroadcastReceiver enterFenceBroadcastReceiver;
-    private HeadphoneFenceBroadcastReceiver headphoneFenceBroadcastReceiver;
+    private AwarenessFence exitHomeLocationFence;
+    private EnterHomeLocationFenceBroadcastReceiver enterHomeLocationFenceBroadcastReceiver;
     private InHomeLocationFenceBroadcastReceiver inHomeLocationFenceBroadcastReceiver;
+    private ExitHomeLocationFenceBroadcastReceiver exitHomeLocationFenceBroadcastReceiver;
+
+    private AwarenessFence headphoneFence;
+    private HeadphoneFenceBroadcastReceiver headphoneFenceBroadcastReceiver;
+
+    private AwarenessFence enterWorkLocationFence;
+    private AwarenessFence inWorkLocationFence;
+    private AwarenessFence exitWorkLocationFence;
 
 
     @Override
@@ -80,18 +92,20 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         ctx = getApplicationContext();
 //        ctx = this;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        //Getting the home location from Shared Preferences
 //        SharedPreferences prefs = ctx.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION", Context.MODE_PRIVATE);
         json = prefs.getString("com.example.janitha.myapplication.HOME_LOCATION", null);
         obj = new Gson().fromJson(json, Location.class);
 
-        Location homeLocation = (Location) obj;
+        homeLocation = (Location) obj;
 
         if (homeLocation == null) {
-            homeLocation = new Location("EmptyLocation");
+            homeLocation = new Location("Empty Home Location");
             homeLocation.setLatitude(0.0f);
             homeLocation.setLongitude(0.0f);
         }
-        Log.i("FenceService", "onStartCmd  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
+        Log.i("FenceService", "onStartCmd  HomeLoc: Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude());
 
         //Getting the HomeLoc Radius
 //        prefs = ctx.getSharedPreferences("com.example.janitha.myapplication.HOME_LOCATION_FENCE_RADIUS", Context.MODE_PRIVATE);
@@ -103,6 +117,30 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
         } else {
             homeLocationRadius = 49;
         }
+
+        //Getting the work location from Shared Preferences
+        json = prefs.getString("com.example.janitha.myapplication.WORK_LOCATION", null);
+        obj = new Gson().fromJson(json, Location.class);
+
+        workLocation = (Location) obj;
+
+        if (workLocation == null) {
+            workLocation = new Location("Empty Work Location");
+            workLocation.setLatitude(0.0f);
+            workLocation.setLongitude(0.0f);
+        }
+        Log.i("FenceService", "onStartCmd  WorkLoc: Lat:" + workLocation.getLatitude() + " Long:" + workLocation.getLongitude());
+
+        //Getting the WorkLoc Radius
+        json = prefs.getString("com.example.janitha.myapplication.WORK_LOCATION_FENCE_RADIUS", null);
+        obj = new Gson().fromJson(json, Integer.class);
+
+        if (obj != null) {
+            workLocationRadius = (int) obj;
+        } else {
+            workLocationRadius = 49;
+        }
+
 
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(ctx)
@@ -124,18 +162,50 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
 
         //------------------ Creating Fences - starts ----------------------- //
 
-        // Create a 'LocationFence.entering' Fence.
+        // Create a 'Home LocationFence.entering' Fence.
         try {
-            enterFence = LocationFence.entering(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius);
-            Log.i("FenceService", "enterFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
+            enterHomeLocationFence = LocationFence.entering(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius);
+            Log.i("FenceService", "enterHomeLocFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
 
-        // Create a 'LocationFence.in' Fence.
+        // Create a 'Home LocationFence.in' Fence.
         try {
             inHomeLocationFence = LocationFence.in(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius, 1);
             Log.i("FenceService", "inHomeLocationFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        // Create a 'Home LocationFence.exit' Fence.
+        try {
+            exitHomeLocationFence = LocationFence.exiting(homeLocation.getLatitude(), homeLocation.getLongitude(), homeLocationRadius);
+            Log.i("FenceService", "exitHomeLocFence  Lat:" + homeLocation.getLatitude() + " Long:" + homeLocation.getLongitude()+" Radius: "+homeLocationRadius);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        // Create a 'Work LocationFence.entering' Fence.
+        try {
+            enterWorkLocationFence = LocationFence.entering(workLocation.getLatitude(), workLocation.getLongitude(), workLocationRadius);
+            Log.i("FenceService", "enterWorkLocFence  Lat:" + workLocation.getLatitude() + " Long:" + workLocation.getLongitude()+" Radius: "+workLocationRadius);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        // Create a 'Work LocationFence.in' Fence.
+        try {
+            inWorkLocationFence = LocationFence.in(workLocation.getLatitude(), workLocation.getLongitude(), workLocationRadius, 1);
+            Log.i("FenceService", "inWorkLocationFence  Lat:" + workLocation.getLatitude() + " Long:" + workLocation.getLongitude()+" Radius: "+workLocationRadius);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        // Create a 'Work LocationFence.exit' Fence.
+        try {
+            exitWorkLocationFence = LocationFence.exiting(workLocation.getLatitude(), workLocation.getLongitude(), workLocationRadius);
+            Log.i("FenceService", "exitWorkLocFence  Lat:" + workLocation.getLatitude() + " Long:" + workLocation.getLongitude()+" Radius: "+workLocationRadius);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -148,18 +218,29 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
 
         //------------------ Registering Fences - Starts ----------------------- //
 
-        registerFence("enteringFenceKey", enterFence);
+        registerFence("enteringHomeLocationFenceKey", enterHomeLocationFence);
         registerFence("inHomeLocationFenceKey", inHomeLocationFence);
+        registerFence("exitHomeLocationFenceKey",exitHomeLocationFence);
+
+        registerFence("enteringWorkLocationFenceKey", enterWorkLocationFence);
+        registerFence("inWorkLocationFenceKey", inWorkLocationFence);
+        registerFence("exitWorkLocationFenceKey",exitWorkLocationFence);
+
         registerFence("headphoneFenceKey", headphoneFence);
 
         //------------------ Registering Fences - Ends ----------------------- //
 
         //------------------ Registering Broadcast Receivers - Starts ----------------------- //
-        enterFenceBroadcastReceiver = new EnterFenceBroadcastReceiver();
-        registerReceiver(enterFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        enterHomeLocationFenceBroadcastReceiver = new EnterHomeLocationFenceBroadcastReceiver();
+        registerReceiver(enterHomeLocationFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 
         inHomeLocationFenceBroadcastReceiver = new InHomeLocationFenceBroadcastReceiver();
         registerReceiver(inHomeLocationFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+
+        exitHomeLocationFenceBroadcastReceiver = new ExitHomeLocationFenceBroadcastReceiver();
+        registerReceiver(exitHomeLocationFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+
+
 
         headphoneFenceBroadcastReceiver = new HeadphoneFenceBroadcastReceiver();
         registerReceiver(headphoneFenceBroadcastReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
@@ -192,7 +273,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
             return;
         }
 
-//        registerFence("enteringFenceKey", enterFence);
+//        registerFence("enteringFenceKey", enterHomeLocationFence);
 //        registerFence("inHomeLocationFenceKey", inHomeLocationFence);
 //        registerFence("headphoneFenceKey", headphoneFence);
 
@@ -255,7 +336,7 @@ public class FenceEnterService extends Service implements GoogleApiClient.Connec
 
     @Override
     public void onLocationChanged(Location location) {
-//        registerFence("enteringFenceKey", enterFence);
+//        registerFence("enteringFenceKey", enterHomeLocationFence);
 //        registerFence("inHomeLocationFenceKey", inHomeLocationFence);
 //        mLocationView.setText("Location received: " + location.toString());
         Log.i("FenceService","Loc_Update: "+location.toString());
