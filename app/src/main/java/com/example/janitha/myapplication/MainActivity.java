@@ -22,23 +22,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.janitha.myapplication.async_tasks.RetrieveLocWeatherTask;
+import com.example.janitha.myapplication.async_tasks.RetrieveHomeLocWeatherTask;
 import com.example.janitha.myapplication.services.FenceEnterService;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
-import com.google.android.gms.awareness.snapshot.HeadphoneStateResult;
-import com.google.android.gms.awareness.snapshot.LocationResult;
-import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.HeadphoneState;
-import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -131,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         cardView_workLocationTitle.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent intent = new Intent(MainActivity.this, HomeLocationActivity.class);
-                intent.putExtra(LAST_HOME_LOCATION, AppData.HOME_LOCATION);
+                intent.putExtra(LAST_HOME_LOCATION, AppData.WORK_LOCATION);
                 intent.putExtra("UserLocationType",2);
                 startActivity(intent);
             }
@@ -219,7 +214,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         // 1 = home location weather update
         // 2 = work location weather update
-        new RetrieveLocWeatherTask(1).execute();
+        new RetrieveHomeLocWeatherTask(1).execute();
+        new RetrieveHomeLocWeatherTask(2).execute();
 
 
         //Start FenceEnterService Service
